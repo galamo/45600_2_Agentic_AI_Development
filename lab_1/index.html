@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<!-- Background set to white — model: Composer (Cursor) -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FIFA World Cup 2026 — Group Stage Report</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --surface: #141418;
+        --surface-2: #1c1c22;
+        --text: #f5f5f7;
+        --muted: #8e8e93;
+        --accent: #c4a35a;
+        --qualified: rgba(0, 166, 81, 0.12);
+        --border: #2a2a32;
+        --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font);
+        background: var(--bg);
+        color: #1a1a1e;
+        line-height: 1.5;
+        min-height: 100vh;
+      }
+
+      .stat-card,
+      .group-card,
+      .table-wrap {
+        color: var(--text);
+      }
+
+      .page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1.5rem 1.25rem 3rem;
+      }
+
+      /* Header */
+      .report-header {
+        text-align: center;
+        padding: 2rem 1rem 2.5rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 2rem;
+        background: #ffffff;
+      }
+
+      .report-header .eyebrow {
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 0.5rem;
+      }
+
+      .report-header h1 {
+        font-size: clamp(1.5rem, 4vw, 2.25rem);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .report-header .subtitle {
+        color: #666;
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+      }
+
+      .report-meta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1.25rem;
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .report-meta span {
+        padding: 0.25rem 0.75rem;
+        background: var(--surface);
+        border-radius: 999px;
+        border: 1px solid var(--border);
+      }
+
+      /* Summary stats */
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-align: center;
+      }
+
+      .stat-card .value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      .stat-card .label {
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 0.25rem;
+      }
+
+      /* Sections */
+      section {
+        margin-bottom: 2.5rem;
+      }
+
+      section h2 {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent);
+        display: inline-block;
+      }
+
+      section > p.hint {
+        color: #666;
+        font-size: 0.85rem;
+        margin: -0.5rem 0 1rem;
+      }
+
+      /* Groups grid */
+      .groups-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.25rem;
+      }
+
+      .group-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 2px solid var(--group-color);
+        overflow: hidden;
+      }
+
+      .group-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: var(--surface-2);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .group-letter {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--group-color);
+        line-height: 1;
+        min-width: 1.5rem;
+      }
+
+      .group-header h3 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .draw-teams {
+        list-style: none;
+        padding: 0.5rem 1rem;
+        display: grid;
+        gap: 0.35rem;
+        font-size: 0.8rem;
+        color: var(--muted);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .draw-teams li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .standings {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.75rem;
+      }
+
+      .standings th,
+      .standings td {
+        padding: 0.4rem 0.35rem;
+        text-align: center;
+      }
+
+      .standings th {
+        color: var(--muted);
+        font-weight: 500;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+      }
+
+      .standings .team-cell {
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        min-width: 0;
+      }
+
+      .standings .team-cell span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .standings .pos {
+        color: var(--muted);
+        width: 1.5rem;
+      }
+
+      .standings .pts {
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      .standings tr.qualified {
+        background: var(--qualified);
+      }
+
+      .flag {
+        border-radius: 2px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      /* Tables — matches & scorers */
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .data-table th {
+        background: var(--surface-2);
+        color: var(--muted);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .data-table tbody tr:hover {
+        background: var(--surface-2);
+      }
+
+      .group-badge {
+        display: inline-block;
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: color-mix(in srgb, var(--group-color) 25%, transparent);
+        color: var(--group-color);
+        border: 1px solid var(--group-color);
+      }
+
+      .match-teams {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .match-teams .score {
+        font-weight: 700;
+        padding: 0.15rem 0.6rem;
+        background: var(--surface-2);
+        border-radius: 6px;
+        margin: 0 0.25rem;
+      }
+
+      .match-date {
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .venue {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .goals {
+        font-weight: 700;
+        color: var(--accent);
+        text-align: center;
+      }
+
+      .data-table .goals {
+        text-align: center;
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: #666;
+        font-size: 0.75rem;
+        border-top: 1px solid var(--border);
+      }
+
+      footer strong {
+        color: #1a1a1e;
+      }
+
+      @media (max-width: 600px) {
+        .standings th:nth-child(n + 6):nth-child(-n + 8),
+        .standings td:nth-child(n + 6):nth-child(-n + 8) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="report-header">
+        <p class="eyebrow">Dummy report · Group stage</p>
+        <h1>FIFA World Cup 2026™</h1>
+        <p class="subtitle">Group stage standings, results &amp; sample statistics</p>
+        <div class="report-meta">
+          <span>Report generated: <strong id="report-date">—</strong></span>
+          <span><span id="meta-teams">49</span> teams · 12 groups</span>
+          <span>Matchdays 1–2 (sample data)</span>
+        </div>
+      </header>
+
+      <div class="summary" aria-label="Summary statistics">
+        <div class="stat-card">
+          <div class="value" id="stat-groups">12</div>
+          <div class="label">Groups</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="stat-teams">49</div>
+          <div class="label">Teams</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="stat-matches">0</div>
+          <div class="label">Matches played</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" id="stat-goals">0</div>
+          <div class="label">Goals scored</div>
+        </div>
+      </div>
+
+      <section aria-labelledby="groups-heading">
+        <h2 id="groups-heading">Group standings</h2>
+        <p class="hint">Teams and groups from the official draw. Top two rows highlighted (dummy qualification).</p>
+        <div class="groups-grid" id="groups-grid"></div>
+      </section>
+
+      <section aria-labelledby="matches-heading">
+        <h2 id="matches-heading">Recent results</h2>
+        <p class="hint">Sample fixtures with fictional scores for demonstration.</p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th>Date</th>
+                <th>Match</th>
+                <th>Venue</th>
+              </tr>
+            </thead>
+            <tbody id="matches-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="scorers-heading">
+        <h2 id="scorers-heading">Top scorers</h2>
+        <p class="hint">Illustrative player statistics (not official).</p>
+        <div class="table-wrap" style="max-width: 480px">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Player</th>
+                <th>Team</th>
+                <th>Goals</th>
+              </tr>
+            </thead>
+            <tbody id="scorers-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>
+        <p>
+          <strong>FIFA World Cup 2026™</strong> — Dummy report for lab purposes.<br />
+          Group composition from the official group stage draw. Match results and player stats are fictional.
+        </p>
+      </footer>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
+</html>

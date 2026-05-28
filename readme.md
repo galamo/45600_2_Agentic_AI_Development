@@ -1,0 +1,54 @@
+# 45600_2_Agentic_AI_Development
+
+## Prerequisites
+
+Install the following tools before working on this project.
+
+### Cursor
+
+AI-powered code editor used for agentic development in this course.
+
+- Download: [https://cursor.com](https://cursor.com)
+- Install the app for your OS (macOS, Windows, or Linux)
+- Sign in and complete setup when you first open Cursor
+
+### Node.js
+
+JavaScript runtime for running scripts, package managers, and local dev servers.
+
+- Download: [https://nodejs.org](https://nodejs.org) (LTS recommended)
+- Or use a version manager:
+  - **macOS/Linux:** [nvm](https://github.com/nvm-sh/nvm)
+  - **Windows:** [nvm-windows](https://github.com/coreybutler/nvm-windows)
+- Verify:
+
+```bash
+node --version
+npm --version
+```
+
+### Docker
+
+Container platform for running services and reproducible environments.
+
+- Download: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
+- Install **Docker Desktop** (macOS/Windows) or **Docker Engine** (Linux)
+- Start Docker Desktop (or the Docker daemon) before using containers
+- Verify:
+
+```bash
+docker --version
+docker compose version
+```
+
+### Git
+
+Version control for cloning repos, branches, and commits.
+
+- Download: [https://git-scm.com/downloads](https://git-scm.com/downloads)
+- macOS: often pre-installed; upgrade via Homebrew: `brew install git`
+- Verify:
+
+```bash
+git --version
+```

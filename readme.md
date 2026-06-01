@@ -7,6 +7,8 @@ galamouyal88@gmail.com
 ## Lectures: 
 - https://gamma.app/docs/AI-Agents-hlgj38btkim0stw?mode=present#card-a5abmjga0u18ily
 
+- https://gamma.app/docs/MCP-vs-Skills-ajmej0v6tyu3yde
+
 ## Prerequisites
 
 Install the following tools before working on this project.

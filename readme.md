@@ -4,7 +4,8 @@
 
 galamouyal88@gmail.com
 
-## Lectures: 
+## Lectures:
+
 - https://gamma.app/docs/AI-Agents-hlgj38btkim0stw?mode=present#card-a5abmjga0u18ily
 
 - https://gamma.app/docs/MCP-vs-Skills-ajmej0v6tyu3yde
@@ -61,3 +62,12 @@ Version control for cloning repos, branches, and commits.
 ```bash
 git --version
 ```
+
+# 1/6/2026
+
+## Ex_1
+
+1. Create HTML CSS JS Project.
+2. Use the JSON file companies.JSON
+3. Create statistics page with at least 2 charts reports.
+4. Make sure to support theme and filters

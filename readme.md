@@ -1,5 +1,9 @@
 # 45600_2_Agentic_AI_Development
 
+### Gal amouyal email:
+
+galamouyal88@gmail.com
+
 ## Prerequisites
 
 Install the following tools before working on this project.

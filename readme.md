@@ -94,3 +94,25 @@ output - orgnized structure ( seperate files, JSON)
 
 1. Create script which increase the number of companies to 1000
 2. Use Random values
+
+# Langchain doc - https://docs.langchain.com/oss/javascript/langchain/overview
+
+### Homework
+
+- Lunch Lab_3
+- Create API key with openrouter
+- Use the new Key with the relevant environment variable file .env:
+
+# Get your key at https://openrouter.ai/keys
+
+OPENROUTER_API_KEY=sk-......
+
+# LangChain model string (provider:model). Default: openrouter:gpt-5.4
+
+OPENROUTER_MODEL=openrouter:gpt-5.4
+
+- Support an extra functionality - Options to generate the story
+
+1. Scary story, Happy story
+2. Good end, Bad end
+3. Short - current configuration, Long 7 senteces ( increased size )

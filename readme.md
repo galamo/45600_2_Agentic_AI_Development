@@ -71,3 +71,21 @@ git --version
 2. Use the JSON file companies.JSON
 3. Create statistics page with at least 2 charts reports.
 4. Make sure to support theme and filters
+
+prompt:
+
+```
+What i want you to do?  high level?
+Business needs.
+how to threat to the prompt? ( AS UI developer/ backend expert )
+
+Functionalities - Business logic ( steps - theme )
+
+constraints ( libs, language )
+
+--detailed functionalities
+examples: how input should be look like?
+charts aggregations reports
+piechart, bar chart line chart
+output - orgnized structure ( seperate files, JSON)
+```

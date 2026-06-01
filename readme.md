@@ -89,3 +89,8 @@ charts aggregations reports
 piechart, bar chart line chart
 output - orgnized structure ( seperate files, JSON)
 ```
+
+## Ex_2
+
+1. Create script which increase the number of companies to 1000
+2. Use Random values

@@ -396,7 +396,7 @@
        * @returns {Promise<{ story: string, subject: string, title: string, mood: string, lines: number, model: string }>}
        */
       async function generateStory({ subject, mood, lines }) {
-        const { data } = await storyClient.post("/api/story", {
+        const { data } = await storyClient.post("http://localhost:3000/api/story", {
           subject,
           mood,
           lines,

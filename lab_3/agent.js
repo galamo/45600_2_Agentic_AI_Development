@@ -1,7 +1,4 @@
 import "dotenv/config";
-import { createAgent } from "langchain";
-import { AIMessage } from "@langchain/core/messages";
-import { resolveModel } from "./model.js";
 import {
   MAX_SUBJECT_LENGTH,
   MAX_TITLE_LENGTH,
@@ -9,13 +6,10 @@ import {
   MAX_STORY_LINES,
   MOODS,
   DEFAULT_MOOD,
-  DEFAULT_SYSTEM_PROMPT,
   DEFAULT_USER_PROMPT_TEMPLATE,
-  buildSystemPrompt,
-  buildUserPrompt,
 } from "./prompts.js";
-
-const tools = []; //useless
+import { getStoryModel } from "./model.js";
+import { runStoryTeller, validateSubject, validateTitle } from "./storyTeller.js";
 
 function usage() {
   console.log(`Usage: npm run agent -- [options] "<subject>"
@@ -99,45 +93,6 @@ function parseArgs(argv) {
   return args;
 }
 
-function validateSubject(subject) {
-  const trimmed = subject.trim();
-  if (!trimmed) {
-    throw new Error(
-      `Please provide a story subject (max ${MAX_SUBJECT_LENGTH} characters).`,
-    );
-  }
-  if (trimmed.length > MAX_SUBJECT_LENGTH) {
-    throw new Error(
-      `Subject is too long (${trimmed.length} chars). Keep it to ${MAX_SUBJECT_LENGTH} characters or fewer.`,
-    );
-  }
-  return trimmed;
-}
-
-function validateTitle(title) {
-  const trimmed = title.trim();
-  if (!trimmed) return "";
-  if (trimmed.length > MAX_TITLE_LENGTH) {
-    throw new Error(
-      `Title is too long (${trimmed.length} chars). Keep it to ${MAX_TITLE_LENGTH} characters or fewer.`,
-    );
-  }
-  return trimmed;
-}
-
-function getStoryText(result) {
-  const messages = result?.messages ?? [];
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
-    if (msg instanceof AIMessage || msg?.type === "ai" || msg?.role === "assistant") {
-      const content =
-        typeof msg.content === "string" ? msg.content : String(msg.content ?? "");
-      if (content.trim()) return content.trim();
-    }
-  }
-  throw new Error("Agent returned no story text.");
-}
-
 async function main() {
   const parsed = parseArgs(process.argv.slice(2));
   if (parsed.help) {
@@ -145,48 +100,24 @@ async function main() {
     return;
   }
 
-  const apiKey = process.env.OPENROUTER_API_KEY?.trim();
-  if (!apiKey) {
-    console.error("Missing API KEY - OPENROUTER_API_KEY");
-    process.exit(1);
-  }
-
   const subject = validateSubject(parsed.subject);
   const title = validateTitle(parsed.title);
-  const useCustomSystem = Boolean(parsed.systemPrompt?.trim());
-  const systemPrompt = useCustomSystem
-    ? parsed.systemPrompt.trim()
-    : buildSystemPrompt({
-        mood: parsed.mood,
-        lines: parsed.lines,
-        title,
-      });
-  const userPromptTemplate = parsed.userPromptTemplate || DEFAULT_USER_PROMPT_TEMPLATE;
-  const userPrompt = buildUserPrompt(subject, {
-    template: userPromptTemplate,
-    title,
-    mood: parsed.mood,
-    lines: parsed.lines,
-  });
-  const model = process.env.OPENROUTER_MODEL?.trim() || "openrouter:gpt-5.4";
-
-  const agent = createAgent({
-    model: resolveModel(model),
-    tools,
-    systemPrompt,
-  });
-
-  console.log(`Model: ${model}`);
+  console.log(`Model: ${getStoryModel()}`);
   console.log(`Subject: ${subject}`);
   if (title) console.log(`Title: ${title}`);
   console.log(`Mood: ${parsed.mood}`);
   console.log(`Max lines: ${parsed.lines}\n`);
 
-  const result = await agent.invoke({
-    messages: [{ role: "user", content: userPrompt }],
+  const { story } = await runStoryTeller({
+    subject,
+    title,
+    mood: parsed.mood,
+    lines: parsed.lines,
+    systemPrompt: parsed.systemPrompt,
+    userPromptTemplate: parsed.userPromptTemplate,
   });
 
-  console.log(getStoryText(result));
+  console.log(story);
 }
 
 main().catch((err) => {

@@ -103,6 +103,7 @@ output - orgnized structure ( seperate files, JSON)
 - Create API key with openrouter
 - Use the new Key with the relevant environment variable file .env:
 
+```js
 # Get your key at https://openrouter.ai/keys
 
 OPENROUTER_API_KEY=sk-......
@@ -110,6 +111,8 @@ OPENROUTER_API_KEY=sk-......
 # LangChain model string (provider:model). Default: openrouter:gpt-5.4
 
 OPENROUTER_MODEL=openrouter:gpt-5.4
+
+```
 
 - Support an extra functionality - Options to generate the story
 

@@ -1,7 +1,7 @@
 {
   "name": "kids-story-agent-lab-3",
   "version": "1.0.0",
-  "description": "LangChain agent that writes short happy kids stories via OpenRouter",
+  "description": "LangChain agent that writes short happy or scary kids stories via OpenRouter",
   "type": "module",
   "scripts": {
     "agent": "node agent.js",

@@ -82,3 +82,5 @@ the agent should receive a few more paramters
 2. scary/happy story - instruct the model to write the apropriate story according to this paramter
 3. the length of the story - number ( default 5 lines )
    limit the story to the number of lines, maximum 10 lines.
+
+

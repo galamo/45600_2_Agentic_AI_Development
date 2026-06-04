@@ -119,3 +119,7 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 1. Scary story, Happy story
 2. Good end, Bad end
 3. Short - current configuration, Long 7 senteces ( increased size )
+
+# npm run agent -- --title "Midnight Paws" --mood scary --lines 8 "a cat in an old attic"
+
+# 4/6/2026

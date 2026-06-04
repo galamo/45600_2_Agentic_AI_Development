@@ -123,3 +123,9 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 # npm run agent -- --title "Midnight Paws" --mood scary --lines 8 "a cat in an old attic"
 
 # 4/6/2026
+
+# Ex_1
+
+- Support new input paramter in the UI - creativity - High / Med / Low ( default Med)
+- support the model temperature according to High 0.9, Med 0.5 and Low 0.1
+- Test the responses across results - use the same subject to measure it

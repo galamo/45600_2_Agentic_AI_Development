@@ -1,9 +1,13 @@
 import { createAgent } from "langchain";
 import { AIMessage } from "@langchain/core/messages";
+import { z } from "zod";
 import { getStoryModel, resolveModel } from "./model.js";
 import {
   MAX_SUBJECT_LENGTH,
   MAX_TITLE_LENGTH,
+  MIN_STORY_LINES,
+  MAX_STORY_LINES,
+  MOODS,
   DEFAULT_STORY_LINES,
   DEFAULT_USER_PROMPT_TEMPLATE,
   buildSystemPrompt,
@@ -40,66 +44,121 @@ export function validateTitle(title) {
   return trimmed;
 }
 
-function optionalString(value, fieldName) {
-  if (value === undefined || value === null || value === "") return "";
-  if (typeof value !== "string") {
-    throw new Error(`${fieldName} must be a string when provided.`);
+const optionalStringField = (fieldName) =>
+  z
+    .union([z.string(), z.literal(""), z.null(), z.undefined()])
+    .optional()
+    .transform((value) =>
+      value === undefined || value === null || value === "" ? "" : value,
+    )
+    .pipe(z.string().max(10_000, `${fieldName} is too long.`))
+    .transform((value) => value.trim());
+
+const storyRequestSchema = z
+  .object({
+    subject: z
+      .unknown()
+      .superRefine((value, ctx) => {
+        if (value === undefined || value === null) {
+          ctx.addIssue({ code: "custom", message: "subject is required." });
+          return;
+        }
+        if (typeof value !== "string") {
+          ctx.addIssue({ code: "custom", message: "subject must be a string." });
+          return;
+        }
+        const trimmed = value.trim();
+        if (!trimmed) {
+          ctx.addIssue({
+            code: "custom",
+            message: `Please provide a story subject (max ${MAX_SUBJECT_LENGTH} characters).`,
+          });
+          return;
+        }
+        if (trimmed.length > MAX_SUBJECT_LENGTH) {
+          ctx.addIssue({
+            code: "custom",
+            message: `Subject is too long (${trimmed.length} chars). Keep it to ${MAX_SUBJECT_LENGTH} characters or fewer.`,
+          });
+        }
+      })
+      .transform((value) => String(value).trim()),
+    title: z
+      .union([z.string(), z.literal(""), z.null(), z.undefined()])
+      .optional()
+      .transform((value) => String(value ?? "").trim())
+      .refine((value) => value.length <= MAX_TITLE_LENGTH, (value) => ({
+        message: `Title is too long (${value.length} chars). Keep it to ${MAX_TITLE_LENGTH} characters or fewer.`,
+      })),
+    mood: z
+      .union([z.string(), z.null(), z.undefined()])
+      .optional()
+      .superRefine((value, ctx) => {
+        try {
+          normalizeMood(value);
+        } catch (err) {
+          ctx.addIssue({
+            code: "custom",
+            message: err?.message ?? `Mood must be one of: ${MOODS.join(", ")}.`,
+          });
+        }
+      })
+      .transform((value) => normalizeMood(value)),
+    lines: z
+      .union([z.number(), z.string(), z.null(), z.undefined()])
+      .optional()
+      .superRefine((value, ctx) => {
+        try {
+          normalizeStoryLines(value);
+        } catch (err) {
+          ctx.addIssue({
+            code: "custom",
+            message:
+              err?.message ??
+              `Story length must be an integer from ${MIN_STORY_LINES} to ${MAX_STORY_LINES} lines.`,
+          });
+        }
+      })
+      .transform((value) => normalizeStoryLines(value)),
+    systemPrompt: optionalStringField("systemPrompt"),
+    userPromptTemplate: optionalStringField("userPromptTemplate"),
+  });
+
+/**
+ * Maps Zod issues to a stable, client-friendly shape.
+ */
+export function formatZodIssues(issues) {
+  return issues.map((issue) => ({
+    path: issue.path.length ? issue.path.map(String).join(".") : "(root)",
+    code: issue.code,
+    message: issue.message,
+    ...(issue.expected !== undefined && { expected: issue.expected }),
+    ...(issue.received !== undefined && { received: issue.received }),
+  }));
+}
+
+export class StoryRequestValidationError extends Error {
+  constructor(zodError) {
+    const details = formatZodIssues(zodError.issues);
+    const summary =
+      details.map((d) => `${d.path}: ${d.message}`).join("; ") ||
+      "Request validation failed.";
+    super(summary);
+    this.name = "StoryRequestValidationError";
+    this.details = details;
+    this.issues = zodError.issues;
   }
-  return value;
 }
 
 /**
  * Validates JSON body for the story-teller chat entrypoint.
  */
 export function validateStoryRequest(body) {
-  if (!body || typeof body !== "object" || Array.isArray(body)) {
-    throw new Error("Request body must be a JSON object.");
+  const result = storyRequestSchema.safeParse(body);
+  if (!result.success) {
+    throw new StoryRequestValidationError(result.error);
   }
-
-  const {
-    subject,
-    title,
-    mood,
-    lines,
-    systemPrompt,
-    userPromptTemplate,
-  } = body;
-
-  if (subject === undefined || subject === null) {
-    throw new Error("subject is required.");
-  }
-  if (typeof subject !== "string") {
-    throw new Error("subject must be a string.");
-  }
-
-  if (title !== undefined && title !== null && typeof title !== "string") {
-    throw new Error("title must be a string when provided.");
-  }
-
-  if (mood !== undefined && mood !== null && typeof mood !== "string") {
-    throw new Error("mood must be a string when provided.");
-  }
-
-  if (
-    lines !== undefined &&
-    lines !== null &&
-    typeof lines !== "number" &&
-    typeof lines !== "string"
-  ) {
-    throw new Error("lines must be a number or string when provided.");
-  }
-
-  const system = optionalString(systemPrompt, "systemPrompt");
-  const userTemplate = optionalString(userPromptTemplate, "userPromptTemplate");
-
-  return {
-    subject: validateSubject(subject),
-    title: validateTitle(title ?? ""),
-    mood: normalizeMood(mood),
-    lines: normalizeStoryLines(lines),
-    systemPrompt: system.trim(),
-    userPromptTemplate: userTemplate.trim(),
-  };
+  return result.data;
 }
 
 export function getStoryText(result) {

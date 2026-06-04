@@ -13,7 +13,7 @@ export function getStoryModel() {
  * Resolves LangChain model strings like "openrouter:openai/gpt-5.4" to a ChatOpenRouter
  * instance. Plain provider strings are passed through to createAgent unchanged.
  */
-export function resolveModel(modelRef) {
+export function resolveModel(modelRef, apiKey) {
   if (typeof modelRef !== "string" || !modelRef.startsWith(OPENROUTER_PREFIX)) {
     return modelRef;
   }

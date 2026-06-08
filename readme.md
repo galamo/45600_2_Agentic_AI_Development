@@ -148,3 +148,7 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
   hints: langtitute, lattitude,
   api: https://restcountries.com/v3.1/name/isr
   geo-code: https://geocoding-api.open-meteo.com/v1/search
+
+  ## Homework
+  1. try to reduce the number of iterations when calling the tool - convert currency
+  2. Extend capabilities to show the flight number + flight hour

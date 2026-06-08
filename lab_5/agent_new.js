@@ -26,7 +26,7 @@ import { z } from "zod";
 
 const model = new ChatOpenRouter({
   model: "openai/gpt-5.4",
-  temperature: 0.2,
+  temperature: 0,
  
 });
 
@@ -41,8 +41,8 @@ const webSearch = new TavilySearch({
 const flightFinder = tool(
   async ({ origin, destination, date }) => {
     const query = date
-      ? `flights from ${origin} to ${destination} on ${date}`
-      : `flights from ${origin} to ${destination}`;
+      ? `flights from ${origin} to ${destination} on ${date} flight numbers departure arrival dates`
+      : `flights from ${origin} to ${destination} flight numbers departure arrival dates`;
     const results = await webSearch.invoke({ query });
     console.log(JSON.stringify(results)) // print in dollar all the text!!!!!
     return typeof results === "string" ? results : JSON.stringify(results);
@@ -50,7 +50,7 @@ const flightFinder = tool(
   {
     name: "flight_finder",
     description:
-      "Search for flight options between cities. Use this to find available flights, prices, and airlines when planning travel.",
+      "Search for flight options between cities. Use this to find available flights, prices, airlines, flight numbers, and departure/arrival dates when planning travel.",
     schema: z.object({
       origin: z.string().describe("Departure city or airport (e.g. San Francisco)"),
       destination: z.string().describe("Arrival city or airport (e.g. Tokyo)"),
@@ -113,6 +113,68 @@ const agent = createAgent({
   systemPrompt: FLIGHT_SYSTEM_PROMPT,
 });
 
+function getMessageRole(msg) {
+  return (msg._getType?.() ?? msg.constructor?.name ?? "Message").toLowerCase();
+}
+
+function extractToolCalls(msg) {
+  const raw = msg.tool_calls ?? msg.additional_kwargs?.tool_calls ?? [];
+  if (!Array.isArray(raw)) return [];
+
+  return raw.map((tc) => {
+    const name = tc.name ?? tc.function?.name ?? "unknown";
+    let args = tc.args;
+    if (args === undefined && tc.function?.arguments) {
+      try {
+        args = JSON.parse(tc.function.arguments);
+      } catch {
+        args = tc.function.arguments;
+      }
+    }
+    return { name, args: args ?? {} };
+  });
+}
+
+/** Print a compact summary: iterations, tool calls, and payloads. */
+export function printAgentRunSummary(result) {
+  const messages = result?.messages ?? [];
+  let iterations = 0;
+  const toolCallLog = [];
+  let toolResultCount = 0;
+
+  for (const msg of messages) {
+    const role = getMessageRole(msg);
+
+    if (role.includes("ai")) {
+      iterations += 1;
+      for (const tc of extractToolCalls(msg)) {
+        toolCallLog.push({ iteration: iterations, ...tc });
+      }
+    }
+
+    if (role.includes("tool")) {
+      toolResultCount += 1;
+    }
+  }
+
+  console.log("\n========== AGENT RUN SUMMARY ==========");
+  console.log(`Iterations (model turns): ${iterations}`);
+  console.log(`Tool calls: ${toolCallLog.length}`);
+  console.log(`Tool results received: ${toolResultCount}`);
+
+  if (toolCallLog.length > 0) {
+    console.log("\nTools called:");
+    toolCallLog.forEach((tc, i) => {
+      console.log(`  ${i + 1}. [iteration ${tc.iteration}] ${tc.name}`);
+      console.log(`     payload: ${JSON.stringify(tc.args)}`);
+    });
+  } else {
+    console.log("\nNo tools were called.");
+  }
+
+  console.log("========== END AGENT RUN SUMMARY ==========\n");
+}
+
 // test/main 
 export async function runTravelPlanner() {
 
@@ -138,54 +200,7 @@ export async function runTravelPlanner() {
       { role: "user", content: userInput }],
   });
 
-
-
-
-
-  // Print agent execution trace: reasoning and tool usage
-  console.log("\n========== AGENT EXECUTION TRACE (reasoning + tools) ==========\n");
-  let step = 0;
-  for (const msg of result.messages) {
-    const role = (msg._getType?.() ?? msg.constructor?.name ?? "Message").toLowerCase();
-    if (role.includes("human")) continue; // skip user message
-
-    if (role.includes("ai")) {
-      step += 1;
-      const content = typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content);
-      if (content && content !== "[]" && content !== "{}") {
-        console.log(`--- Step ${step} [AI reasoning] ---`);
-        console.log(content.slice(0, 1500) + (content.length > 1500 ? "\n... (truncated)" : ""));
-        console.log("");
-      }
-      const toolCalls = msg.tool_calls ?? msg.additional_kwargs?.tool_calls ?? [];
-      if (Array.isArray(toolCalls) && toolCalls.length > 0) {
-        console.log(`--- Step ${step} [Tools called] ---`);
-        for (const tc of toolCalls) {
-          const name = tc.name ?? tc.function?.name ?? "unknown";
-          let args = tc.args;
-          if (args === undefined && tc.function?.arguments) {
-            try {
-              args = JSON.parse(tc.function.arguments);
-            } catch {
-              args = tc.function.arguments;
-            }
-          }
-          console.log(`  • ${name}`, args ?? {});
-        }
-        console.log("");
-      }
-    }
-
-    if (role.includes("tool")) {
-      const name = msg.name ?? "tool";
-      const content = typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content);
-      const preview = content.length > 400 ? content.slice(0, 400) + "..." : content;
-      console.log(`--- Tool result [${name}] ---`);
-      console.log(preview);
-      console.log("");
-    }
-  }
-  console.log("========== END AGENT TRACE ==========\n");
+  printAgentRunSummary(result);
 
   // Get the final AI response from messages
   const lastMessage = result.messages[result.messages.length - 1];

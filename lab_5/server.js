@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { agent } from "./agent_new.js";
+import { agent, printAgentRunSummary } from "./agent_new.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -34,9 +34,9 @@ app.post("/api/chat", async (req, res) => {
     const result = await agent.invoke({
       messages: [{ role: "user", content: fullMessage }],
     });
-    console.log("!!!!!")
-    console.log(result)
-    console.log("!!!!!")
+
+    printAgentRunSummary(result);
+
     const lastMessage = result.messages[result.messages.length - 1];
     const responseContent = typeof lastMessage.content === "string"
       ? lastMessage.content

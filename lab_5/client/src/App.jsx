@@ -211,7 +211,21 @@ function App() {
             <div className="flights-list">
               {flights.map((flight, index) => (
                 <div key={index} className="flight-card">
-                  <div className="flight-airline">{flight.airline ?? '—'}</div>
+                  <div className="flight-header">
+                    <div className="flight-airline">{flight.airline ?? '—'}</div>
+                    {flight.flightNumber && (
+                      <div className="flight-number">{flight.flightNumber}</div>
+                    )}
+                  </div>
+                  {(flight.startDate || flight.endDate) && (
+                    <div className="flight-dates">
+                      {flight.startDate && <span>{flight.startDate}</span>}
+                      {flight.startDate && flight.endDate && (
+                        <span className="flight-arrow">→</span>
+                      )}
+                      {flight.endDate && <span>{flight.endDate}</span>}
+                    </div>
+                  )}
                   <div className="flight-route">
                     <span className="flight-departure">{flight.departure ?? '—'}</span>
                     <span className="flight-arrow">→</span>

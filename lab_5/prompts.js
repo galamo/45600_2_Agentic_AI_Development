@@ -10,7 +10,8 @@ const RULES = `- Use the flight_finder tool to search for flights when planning 
 - When showing prices to a user who prefers NIS/ILS, use the currency_exchange tool to convert USD prices to shekels ONLY IF THE USER ASKS FOR IT.
 - Your final response must be valid JSON without markdown code fences or any wrapper text—it must be ready to parse directly.
 - The message field should contain the trip planning summary based on the requested days, style, budget, and interests.
-- Populate the flights array with the best options found via flight_finder.`;
+- Populate the flights array with the best options found via flight_finder.
+- For each flight, include the flight number (e.g. "LY 001", "AA 100") and the start/end dates (departure date and arrival date) when available from search results.`;
 
 const OUTPUT_SCHEMA = `{
   "from": { "name": "string" },
@@ -19,6 +20,9 @@ const OUTPUT_SCHEMA = `{
   "flights": [
     {
       "airline": "string",
+      "flightNumber": "string",
+      "startDate": "string",
+      "endDate": "string",
       "departure": "string",
       "arrival": "string",
       "price": "string",

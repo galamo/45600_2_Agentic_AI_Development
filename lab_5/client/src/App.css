@@ -312,11 +312,38 @@
   border: 1px solid #e9ecef;
 }
 
+.flight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .flight-airline {
   font-weight: 600;
   color: #495057;
-  margin-bottom: 8px;
   font-size: 0.95rem;
+}
+
+.flight-number {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #667eea;
+  background: #eef2ff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.flight-dates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: #495057;
+  font-weight: 500;
 }
 
 .flight-route {

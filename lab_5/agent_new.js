@@ -1,31 +1,40 @@
 import "dotenv/config";
 import jwt from "jsonwebtoken";
+
+import { ChatOpenRouter } from "@langchain/openrouter";
 import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { TavilySearch } from "@langchain/tavily";
 import { createAgent } from "langchain";
 
 import { tool } from "@langchain/core/tools";
+import { FLIGHT_SYSTEM_PROMPT } from "./prompts.js";
 import { z } from "zod";
 
 // calude, sonet , gemini ? 
-const model = new ChatOpenAI({
-  model: "openai/gpt-4o-mini", // OpenRouter model with tool calling support
-  temperature: 0.2,
+// const model = new ChatOpenAI({
+//   model: "openai/gpt-4o-mini", // OpenRouter model with tool calling support
+//   temperature: 0.2,
   
-  // streaming:true,
-  // IMPORTANT: OpenRouter base URL
-  configuration: {
-    baseURL: "https://openrouter.ai/api/v1", // antropic / google / openai ... 
-    apiKey: process.env.OPENROUTER_API_KEY,
-    
-  },
+//   // streaming:true,
+//   // IMPORTANT: OpenRouter base URL
+//   configuration: {
+//     baseURL: "https://openrouter.ai/api/v1", // antropic / google / openai ... 
+//     apiKey: process.env.OPENROUTER_API_KEY,
+//   },
+// });
+
+
+const model = new ChatOpenRouter({
+  model: "openai/gpt-5.4",
+  temperature: 0.2,
+ 
 });
 
 // Web search tool – access to the web for travel info, hotels, destinations, etc.
 const webSearch = new TavilySearch({
   maxResults: 5,
   topic: "general",
+  
 });
 
 // Flight finder tool – searches for flights using web search
@@ -57,7 +66,7 @@ const currencyExchange = tool(({ priceInDollar }) => {
   // replace? parseInt
   const price = parseFloat(priceInDollar);
   if (isNaN(price)) return "Invalid price. Please provide a numeric value in USD.";
-  const priceInNIS = Math.round(price * 3.2);
+  const priceInNIS = Math.round(price * 3.2); // use currency excahnge forex 
   return `${price} USD = ${priceInNIS} NIS/ILS`;
 }, {
   name: "currency_exchange",
@@ -66,6 +75,8 @@ const currencyExchange = tool(({ priceInDollar }) => {
     priceInDollar: z.string().describe("Price in US Dollars to convert to NIS/ILS"),
   }),
 });
+
+
 
 // Geocoding tool – get latitude/longitude for from & to (for map positioning)
 const GEOCODING_BASE = "https://geocoding-api.open-meteo.com/v1/search";
@@ -94,40 +105,6 @@ const REST_COUNTRIES_BASE = "https://restcountries.com/v3.1/alpha";
 
 // tool exchange to all currnecies ( MCP/openapi sepcification)
 
-
-const FLIGHT_SYSTEM_PROMPT = `You are a friendly travel-planning agent with access to a flight finder tool
-
-TOOLS:
-- flight_finder: Search for flights between cities. Use this to find flights, prices, and airlines.
-- currency_exchange: Convert USD prices to NIS/ILS. Use this when the user asks for prices in shekels.
-- geocode_from_to: Get latitude/longitude for origin and destination. Use this when the user wants map positions or coordinates for from/to cities (e.g. to show a route on a map).
-- country_flags_from_to: Get PNG flag image URLs for two countries by their alpha-3 codes (e.g. ARE, USA, ISR). Use this when the user wants flag images for from/to countries.
-
-IMPORTANT: 
-plan a travel
-your response should be valid JSON without wrappers, the response need to be ready for parse.
-the response will contain message - the trip planning based on the requested days & flights array as presented here:
-use the tool geocode_from_to to get the country from and to coordinates, return the coordinats as object inside from and to keys.
-use the country_flags_from_to , to get flags, find out what is the alpha-3 code for the relevant cities and send to the tool, place the response in the flag key
-{
-  "from": { long: number, lat: number, name: string, flag: string },
-  "to": { long: number, lat: number, name: string , flag: string},
-  "message":"string"
-  "flights": [
-    {
-      "airline": "string", 
-      "departure": "string",  
-      "arrival": "string", 
-      "price": "string", 
-      "duration": "string", 
-      "stops": "string" 
-    }
-  ]
-}
-
-
-- When showing prices to a user who prefers NIS/ILS, use the currency_exchange tool to convert USD prices to shekels ONLY IF THE USER ASK FOR IT.
-`;
 
 // Create ReAct agent with web and flight tools (createAgent is the replacement for deprecated createReactAgent)
 const agent = createAgent({

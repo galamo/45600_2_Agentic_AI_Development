@@ -131,8 +131,19 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 - Test the responses across results - use the same subject to measure it
 
 ## Homework
+
 - Try to support another UI capability.
 - The UI will expose a Chatbot to help writing the story
 - IMPORTANT - you must extract the information based on the user prompt.
 - Support defualt if the user didnt mentioned in the text the relevant information
 - block if no subject.
+
+# 8/6/2026
+
+# Ex_1
+
+- Add more tools to lab_5
+- tool1 - support showing the source and destination country on map
+- tool2 - show the flag of the counry on the map
+  hints: langtitute, lattitude,
+  api: https://restcountries.com/v3.1/name/isr

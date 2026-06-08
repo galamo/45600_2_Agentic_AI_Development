@@ -124,13 +124,7 @@ export async function runExtractorAgent(text, { mockResponse } = {}) {
 
   const rawJson = parseJsonFromText(getAgentText(result));
   console.log("rawJson", rawJson);
-  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-  await sleep(5000);
-  if(rawJson.subject === null) {
-    throw new ExtractorError("No subject found in the text!!!!!! after.");
-  }
-  return rawJson;
-  // return normalizeExtracted(rawJson);
+   return normalizeExtracted(rawJson);
 }
 
 export { NO_SUBJECT_ERROR };

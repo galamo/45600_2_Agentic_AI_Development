@@ -20,7 +20,7 @@ Respond with ONLY valid JSON (no markdown fences, no commentary) using this shap
   "mood": "happy" | "scary" | null,
   "lines": number | null,
   "title": string | null
-}
+} 
 
 Rules:
 - subject: the main topic or character for the kids story (max ${MAX_SUBJECT_LENGTH} chars). null if the user did not mention any story topic.

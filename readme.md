@@ -147,3 +147,4 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 - tool2 - show the flag of the counry on the map
   hints: langtitute, lattitude,
   api: https://restcountries.com/v3.1/name/isr
+  geo-code: https://geocoding-api.open-meteo.com/v1/search

@@ -37,20 +37,55 @@ const webSearch = new TavilySearch({
   
 });
 
+const USD_TO_NIS_RATE = 3.2;
+
+function convertUsdToNis(priceInDollar) {
+  const price = parseFloat(String(priceInDollar).replace(/,/g, ""));
+  if (isNaN(price)) return null;
+  const priceInNIS = Math.round(price * USD_TO_NIS_RATE);
+  return { usd: price, nis: priceInNIS };
+}
+
+function formatNisConversion({ usd, nis }) {
+  return `${usd} USD = ${nis} NIS/ILS`;
+}
+
+function extractUsdPrices(text) {
+  const matches = text.matchAll(/\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?|\d+(?:\.\d{2})?)/g);
+  const prices = new Set();
+  for (const match of matches) {
+    const value = parseFloat(match[1].replace(/,/g, ""));
+    if (!isNaN(value) && value > 0) prices.add(value);
+  }
+  return [...prices];
+}
+
 // Flight finder tool – searches for flights using web search
 const flightFinder = tool(
-  async ({ origin, destination, date }) => {
+  async ({ origin, destination, date, convertToNIS }) => {
     const query = date
       ? `flights from ${origin} to ${destination} on ${date} flight numbers departure arrival dates`
       : `flights from ${origin} to ${destination} flight numbers departure arrival dates`;
     const results = await webSearch.invoke({ query });
-    console.log(JSON.stringify(results)) // print in dollar all the text!!!!!
-    return typeof results === "string" ? results : JSON.stringify(results);
+    console.log(JSON.stringify(results));
+    let output = typeof results === "string" ? results : JSON.stringify(results);
+
+    if (convertToNIS) {
+      const usdPrices = extractUsdPrices(output);
+      if (usdPrices.length > 0) {
+        const conversions = usdPrices
+          .map((p) => convertUsdToNis(p))
+          .map(formatNisConversion);
+        output += `\n\nNIS conversions (1 USD ≈ ${USD_TO_NIS_RATE} NIS):\n${conversions.join("\n")}`;
+      }
+    }
+
+    return output;
   },
   {
     name: "flight_finder",
     description:
-      "Search for flight options between cities. Use this to find available flights, prices, airlines, flight numbers, and departure/arrival dates when planning travel.",
+      "Search for flight options between cities. Use this to find available flights, prices, airlines, flight numbers, and departure/arrival dates when planning travel. Set convertToNIS=true when the user wants prices in shekels to get NIS conversions in the same call and avoid a separate currency_exchange step.",
     schema: z.object({
       origin: z.string().describe("Departure city or airport (e.g. San Francisco)"),
       destination: z.string().describe("Arrival city or airport (e.g. Tokyo)"),
@@ -58,22 +93,49 @@ const flightFinder = tool(
         .string()
         .optional()
         .describe("Travel date (e.g. 2025-03-15) – optional"),
+      convertToNIS: z
+        .boolean()
+        .optional()
+        .describe("When true, append NIS/ILS conversions for USD prices found in results"),
     }),
   }
 );
 
-const currencyExchange = tool(({ priceInDollar }) => {
-  // replace? parseInt
-  const price = parseFloat(priceInDollar);
-  if (isNaN(price)) return "Invalid price. Please provide a numeric value in USD.";
-  const priceInNIS = Math.round(price * 3.2); // use currency excahnge forex 
-  return `${price} USD = ${priceInNIS} NIS/ILS`;
+const currencyExchange = tool(({ pricesInDollar, priceInDollar }) => {
+  const prices = pricesInDollar?.length
+    ? pricesInDollar
+    : priceInDollar != null
+      ? [priceInDollar]
+      : [];
+
+  if (prices.length === 0) {
+    return "No prices provided. Pass pricesInDollar (array) or priceInDollar (single value).";
+  }
+
+  const conversions = prices.map((p) => convertUsdToNis(p));
+  if (conversions.some((c) => c === null)) {
+    return "Invalid price(s). Please provide numeric values in USD.";
+  }
+
+  return conversions.map(formatNisConversion).join("\n");
 }, {
   name: "currency_exchange",
-  description: "Convert a price from US Dollars (USD) to Israeli New Shekel (NIS/ILS). Use this when the user asks for prices in NIS, shekels, or ILS, or when showing flight/hotel prices to someone who prefers Israeli currency. Exchange rate: 1 USD ≈ 3.2 NIS.",
-  schema: z.object({
-    priceInDollar: z.string().describe("Price in US Dollars to convert to NIS/ILS"),
-  }),
+  description:
+    "Convert USD prices to Israeli New Shekel (NIS/ILS). When converting multiple flight or hotel prices, pass ALL values in one call via pricesInDollar—do not call this tool repeatedly. Exchange rate: 1 USD ≈ 3.2 NIS.",
+  schema: z
+    .object({
+      pricesInDollar: z
+        .array(z.string())
+        .optional()
+        .describe("All USD prices to convert in a single call (preferred for multiple prices)"),
+      priceInDollar: z
+        .string()
+        .optional()
+        .describe("Single USD price; use pricesInDollar when converting more than one"),
+    })
+    .refine((data) => data.pricesInDollar?.length || data.priceInDollar, {
+      message: "Provide pricesInDollar or priceInDollar",
+    }),
 });
 
 

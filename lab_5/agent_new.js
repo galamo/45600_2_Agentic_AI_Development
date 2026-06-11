@@ -101,18 +101,15 @@ const flightFinder = tool(
   }
 );
 
-const currencyExchange = tool(({ pricesInDollar, priceInDollar }) => {
-  const prices = pricesInDollar?.length
-    ? pricesInDollar
-    : priceInDollar != null
-      ? [priceInDollar]
-      : [];
-
-  if (prices.length === 0) {
-    return "No prices provided. Pass pricesInDollar (array) or priceInDollar (single value).";
+const currencyExchange = tool(({ pricesInDollar }) => {
+  if(!Array.isArray(pricesInDollar)) {
+    return "Wrong input type"
+  }
+  if (!pricesInDollar?.length) {
+    return "No prices provided. Pass pricesInDollar as an array, e.g. [\"450\"] for one price or [\"450\", \"520\", \"610\"] for multiple.";
   }
 
-  const conversions = prices.map((p) => convertUsdToNis(p));
+  const conversions = pricesInDollar.map((p) => convertUsdToNis(p));
   if (conversions.some((c) => c === null)) {
     return "Invalid price(s). Please provide numeric values in USD.";
   }
@@ -121,21 +118,13 @@ const currencyExchange = tool(({ pricesInDollar, priceInDollar }) => {
 }, {
   name: "currency_exchange",
   description:
-    "Convert USD prices to Israeli New Shekel (NIS/ILS). When converting multiple flight or hotel prices, pass ALL values in one call via pricesInDollar—do not call this tool repeatedly. Exchange rate: 1 USD ≈ 3.2 NIS.",
-  schema: z
-    .object({
-      pricesInDollar: z
-        .array(z.string())
-        .optional()
-        .describe("All USD prices to convert in a single call (preferred for multiple prices)"),
-      priceInDollar: z
-        .string()
-        .optional()
-        .describe("Single USD price; use pricesInDollar when converting more than one"),
-    })
-    .refine((data) => data.pricesInDollar?.length || data.priceInDollar, {
-      message: "Provide pricesInDollar or priceInDollar",
-    }),
+    "Convert USD prices to Israeli New Shekel (NIS/ILS). Always pass pricesInDollar as an array: [\"450\"] for one price or [\"450\", \"520\"] for multiple—never call this tool repeatedly. Exchange rate: 1 USD ≈ 3.2 NIS.",
+  schema: z.object({
+    pricesInDollar: z
+      .array(z.string())
+      .min(1)
+      .describe('USD prices to convert, always as an array: one price ["450"] or multiple ["450", "520", "610"]'),
+  }),
 });
 
 

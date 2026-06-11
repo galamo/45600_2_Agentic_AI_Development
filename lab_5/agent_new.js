@@ -60,26 +60,15 @@ function extractUsdPrices(text) {
   return [...prices];
 }
 
-// Flight finder tool – searches for flights using web search
+// change the tool to not convert to NIS.
 const flightFinder = tool(
-  async ({ origin, destination, date, convertToNIS }) => {
+  async ({ origin, destination, date }) => {
     const query = date
       ? `flights from ${origin} to ${destination} on ${date} flight numbers departure arrival dates`
       : `flights from ${origin} to ${destination} flight numbers departure arrival dates`;
     const results = await webSearch.invoke({ query });
     console.log(JSON.stringify(results));
     let output = typeof results === "string" ? results : JSON.stringify(results);
-
-    if (convertToNIS) { // less relevant
-      const usdPrices = extractUsdPrices(output);
-      if (usdPrices.length > 0) {
-        const conversions = usdPrices
-          .map((p) => convertUsdToNis(p))
-          .map(formatNisConversion);
-        output += `\n\nNIS conversions (1 USD ≈ ${USD_TO_NIS_RATE} NIS):\n${conversions.join("\n")}`;
-      }
-    }
-
     return output;
   },
   {
@@ -92,15 +81,12 @@ const flightFinder = tool(
       date: z
         .string()
         .optional()
-        .describe("Travel date (e.g. 2025-03-15) – optional"),
-      convertToNIS: z
-        .boolean()
-        .optional()
-        .describe("When true, append NIS/ILS conversions for USD prices found in results"),
+        .describe("Travel date (e.g. 2025-03-15) – optional")
     }),
   }
 );
 
+// tool is not working as expected - fix it.
 const currencyExchange = tool(({ pricesInDollar }) => {
   if(!Array.isArray(pricesInDollar)) {
     return "Wrong input type"

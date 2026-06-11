@@ -10,6 +10,10 @@ galamouyal88@gmail.com
 
 - https://gamma.app/docs/MCP-vs-Skills-ajmej0v6tyu3yde
 
+# Files:
+
+https://drive.google.com/drive/folders/1XNZO0sBgUooahIMmYHMSHU2nVbmWWMGT?usp=sharing
+
 ## Prerequisites
 
 Install the following tools before working on this project.

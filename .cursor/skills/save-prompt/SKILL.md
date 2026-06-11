@@ -10,10 +10,10 @@ Save the user's **current message prompt** (the text they sent with this skill) 
 
 ## Output
 
-| Item | Rule |
-|------|------|
-| Directory | `prompts/` at the workspace root (create if missing) |
-| Filename | `prompt_{title}_{currentDateTime}.md` |
+| Item      | Rule                                                                        |
+| --------- | --------------------------------------------------------------------------- |
+| Directory | `prompts/` at the workspace root (create if missing)                        |
+| Filename  | `prompt_{title}_{currentDateTime}.md`                                       |
 | File body | The prompt text only, wrapped in a minimal markdown document (see template) |
 
 ## Title (`{title}`)
@@ -53,6 +53,7 @@ Saved: {currentDateTime}
 ## Examples
 
 **User message:**
+
 ```
 /save-prompt title: weather-agent
 
@@ -62,6 +63,7 @@ Build a LangGraph agent that calls OpenWeather and returns JSON.
 **File:** `prompts/prompt_weather-agent_2026-06-04_143052.md`
 
 **User message (no title):**
+
 ```
 @save-prompt Summarize the last three commits in plain English.
 ```
@@ -73,3 +75,7 @@ Build a LangGraph agent that calls OpenWeather and returns JSON.
 - Auto-save on every message (this skill is manual-only).
 - Overwrite an existing file; if a collision occurs, append `_2`, `_3`, etc. to the datetime segment.
 - Commit or push unless the user separately asks.
+
+## IMPORTANT
+
+After saving the prompt and finishing this skill execute the prompt and do the task - complete the prompt.

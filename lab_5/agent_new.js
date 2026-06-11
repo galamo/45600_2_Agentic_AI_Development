@@ -70,7 +70,7 @@ const flightFinder = tool(
     console.log(JSON.stringify(results));
     let output = typeof results === "string" ? results : JSON.stringify(results);
 
-    if (convertToNIS) {
+    if (convertToNIS) { // less relevant
       const usdPrices = extractUsdPrices(output);
       if (usdPrices.length > 0) {
         const conversions = usdPrices

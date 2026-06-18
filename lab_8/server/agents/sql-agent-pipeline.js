@@ -29,7 +29,7 @@ export async function runSqlAgent(question) {
     };
   }
 
-  const execution = await runQuery(sql, []);
+  const execution = await runQuery(sql, []); //this is not agent its only an helper 
   const naturalAnswer = await answer(question, execution, sql);
 
   return {

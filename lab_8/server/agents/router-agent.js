@@ -68,6 +68,7 @@ function createRouterTools() {
     schema: z.object({
       question: z.string().describe("The user's question to answer using the database"),
     }),
+    
     func: async ({ question }) => {
       const result = await runSqlAgent(question);
       return {

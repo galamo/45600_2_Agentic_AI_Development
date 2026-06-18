@@ -11,7 +11,7 @@ function createModel() {
   const openaiKey = process.env.OPENAI_API_KEY;
   if (openRouterKey) {
     return new ChatOpenAI({
-      model: "openai/gpt-4o-mini",
+      model: "openai/gpt-5.5-pro",
       temperature: 0,
       configuration: { baseURL: "https://openrouter.ai/api/v1", apiKey: openRouterKey },
     });

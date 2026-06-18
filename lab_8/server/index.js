@@ -17,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 // let mermiad answer which avilable tools exists?
 app.post("/query", async (req, res) => {
+  console.log("quest started", new Date().toISOString());
   const { question } = req.body || {};
   if (!question || typeof question !== "string") {
     return res.status(400).json({ error: "Missing or invalid 'question' in body" });

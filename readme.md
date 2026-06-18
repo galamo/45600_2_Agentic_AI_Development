@@ -157,15 +157,15 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
   1. try to reduce the number of iterations when calling the tool - convert currency
   2. Extend capabilities to show the flight number + flight hour
 
-
-
 # 11/6/2026
+
 1. First - Pull Lab_7
 2. Install Dependencies
 3. Plant the relevant .env
 4. run lab_7_RAG/scripts/run-pricing-qa.js , using node [File]
 
 # Ex_1
+
 - Create A new Folder Project with the following structure
 - /agent
   /scripts
@@ -177,3 +177,11 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 - write the code in a way that the RAG injestion process will not be coupled to the request - QandA
 - use a what ever model you prefered.
 - /data will contain the PDF
+
+# 18/6
+
+## Ex_1
+
+- NorthWindAgent
+- Create an agent that knows to answer information from:
+- https://github.com/busynovadad/northwind-MySQL

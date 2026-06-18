@@ -101,5 +101,3 @@ COMMENT ON TABLE users_permissions IS 'Junction: which user has which permission
 COMMENT ON TABLE audit_login IS 'Login audit: user_id, email_used, ip, success, created_at';
 COMMENT ON TABLE resource IS 'Sports resources: name, type (football, tennis, basketball)';
 COMMENT ON TABLE resource_booking IS 'Bookings: resource_id, user_id, start_time, end_time';
-
-

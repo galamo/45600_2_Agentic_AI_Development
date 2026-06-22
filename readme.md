@@ -185,3 +185,12 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 - NorthWindAgent
 - Create an agent that knows to answer information from:
 - https://github.com/busynovadad/northwind-MySQL
+
+# 22/6/2026
+
+## Ex_1 (Lab 10)
+
+- Настроили изолированное Docker-окружение для `my_agent` с базой данных PostgreSQL и pgvector (на порту 5433).
+- Индексировали резюме Григория Мовсесяна из PDF в векторную таблицу `resume_vectors` с помощью кастомного сплиттера на английском языке для точности RAG.
+- Подключили этот инструмент RAG-поиска к нашему агенту.
+- Настроили глобальные конфигурации MCP-серверов (Mermaid Chart и GitHub) в среде разработки.

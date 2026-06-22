@@ -185,3 +185,9 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 - NorthWindAgent
 - Create an agent that knows to answer information from:
 - https://github.com/busynovadad/northwind-MySQL
+
+# 22/6
+
+## Ex_2
+
+- configure GITHUB MCP.

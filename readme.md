@@ -191,3 +191,4 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 ## Ex_2
 
 - configure GITHUB MCP.
+- another option 

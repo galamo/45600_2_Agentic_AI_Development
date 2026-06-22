@@ -18,3 +18,5 @@
 18. How many bookings are for football resources? Expected result: 8
 19. Which resource type has the most bookings? Expected result: football with 8 bookings
 20. Which users booked tennis resources? Expected result: Dave Brown, Frank Miller, Henry Moore, Iris Taylor, Jack Anderson, Tina King, Victor Scott
+
+- test.

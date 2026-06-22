@@ -10,6 +10,40 @@ import {
   getTopic,
 } from "./lib/quiz-store.js";
 
+const topicSummarySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  questionCount: z.number(),
+});
+
+const listTopicsOutputSchema = z.object({
+  topics: z.array(topicSummarySchema),
+});
+
+const getQuestionOutputSchema = z.object({
+  error: z.string().optional(),
+  done: z.boolean().optional(),
+  message: z.string().optional(),
+  topicId: z.string().optional(),
+  topicName: z.string().optional(),
+  questionId: z.string().optional(),
+  question: z.string().optional(),
+});
+
+const checkAnswerOutputSchema = z.object({
+  correct: z.boolean(),
+  feedback: z.string(),
+  expectedAnswer: z.string().nullable(),
+  questionId: z.string().optional(),
+});
+
+function structuredToolResult(structuredContent) {
+  return {
+    content: [{ type: "text", text: JSON.stringify(structuredContent, null, 2) }],
+    structuredContent,
+  };
+}
+
 export function createQuizMcpServer() {
   const server = new McpServer(
     { name: "lab10-quiz-mcp", version: "1.0.0" },
@@ -21,10 +55,15 @@ export function createQuizMcpServer() {
     {
       description: "List available quiz topics with question counts.",
       inputSchema: z.object({}),
+      outputSchema: listTopicsOutputSchema,
     },
-    async () => ({
-      content: [{ type: "text", text: JSON.stringify(listTopics(), null, 2) }],
-    })
+    async () => {
+      const topics = listTopics();
+      return {
+        content: [{ type: "text", text: JSON.stringify(topics, null, 2) }],
+        structuredContent: { topics },
+      };
+    }
   );
 
   server.registerTool(
@@ -40,6 +79,7 @@ export function createQuizMcpServer() {
           .nullable()
           .describe("Previous question id; omit for the first question"),
       }),
+      outputSchema: getQuestionOutputSchema,
     },
     async ({ topicId, afterQuestionId }) => {
       const topic = getTopic(topicId);
@@ -52,32 +92,18 @@ export function createQuizMcpServer() {
 
       const question = getNextQuestion(topicId, afterQuestionId ?? null);
       if (!question) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({
-                done: true,
-                message: `No more questions in topic "${topic.name}".`,
-              }),
-            },
-          ],
-        };
+        return structuredToolResult({
+          done: true,
+          message: `No more questions in topic "${topic.name}".`,
+        });
       }
 
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify({
-              topicId,
-              topicName: topic.name,
-              questionId: question.id,
-              question: question.question,
-            }),
-          },
-        ],
-      };
+      return structuredToolResult({
+        topicId,
+        topicName: topic.name,
+        questionId: question.id,
+        question: question.question,
+      });
     }
   );
 
@@ -90,12 +116,11 @@ export function createQuizMcpServer() {
         questionId: z.string().describe("Question id from get_question"),
         userAnswer: z.string().describe("The user's answer text"),
       }),
+      outputSchema: checkAnswerOutputSchema,
     },
     async ({ topicId, questionId, userAnswer }) => {
       const result = checkAnswer(topicId, questionId, userAnswer);
-      return {
-        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-      };
+      return structuredToolResult(result);
     }
   );
 

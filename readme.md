@@ -188,7 +188,17 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 
 # 22/6
 
-## Ex_2
+## Ex_1
 
 - configure GITHUB MCP.
 - configure FIGMA MCP.
+
+
+## Ex_2
+
+- Lab 10 — extend the Quiz MCP server (`lab_10_mcp/mcp-server/`).
+- Add **at least 2 new tools** in `create-quiz-server.js` (logic in `lib/quiz-store.js`).
+- Suggested tools: `get_question_by_id`, `get_topic_progress` (or `search_questions`, `get_random_question`).
+- Each tool: Zod input/output schema, clear description, handle unknown `topicId` / invalid input with `isError`.
+- Test from Cursor MCP or the lab client.
+

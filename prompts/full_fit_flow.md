@@ -74,5 +74,5 @@ Create a dated feature branch, commit all current work, push it to the remote, a
 ## Quick invoke (one line)
 
 ```
-Run the git branch → commit → push → PR workflow from prompts/prompt_git-branch-commit-push-pr.md using today's date for the branch name.
+Run the git branch → commit → push → PR workflow from prompts/full_fit_flow.md using today's date for the branch name.
 ```

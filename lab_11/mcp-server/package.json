@@ -1,7 +1,7 @@
 {
-  "name": "lab10-quiz-mcp-server",
+  "name": "lab11-products-mcp",
   "version": "1.0.0",
-  "description": "Quiz MCP server (Streamable HTTP) for Lab 10",
+  "description": "Products MCP server — exposes getProducts tool via Streamable HTTP",
   "type": "module",
   "scripts": {
     "start": "node index.js",
@@ -10,9 +10,10 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
     "express": "^4.21.0",
-    "nodemon": "^3.1.14",
     "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }

@@ -17,7 +17,13 @@
           "id": "mcp-3",
           "question": "What are the three primitive capabilities MCP servers can expose?",
           "answer": "tools, resources, and prompts"
+        },
+        {
+          "id": "mcp-3",
+          "question": "What are the three primitive capabilities MCP servers can expose?",
+          "answer": "tools, resources, and prompts"
         }
+        
       ]
     },
     "langchain": {
@@ -57,6 +63,16 @@
           "id": "ag-3",
           "question": "In a ReAct-style agent, what two things alternate in the loop?",
           "answer": "reasoning and acting"
+        }
+      ]
+    },
+    "sports": {
+      "name": "Sports",
+      "questions": [
+        {
+          "id": "sp-1",
+          "question": "What is the capital of France?",
+          "answer": "Paris"
         }
       ]
     }

@@ -10,6 +10,10 @@ import {
   getTopic,
 } from "./lib/quiz-store.js";
 
+const topicIdSchema = z
+  .enum(["sports", "mcp", "langchain", "agents"])
+  .describe("Topic id: sports, mcp, langchain, or agents");
+
 const topicSummarySchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -44,18 +48,21 @@ function structuredToolResult(structuredContent) {
   };
 }
 
-export function createQuizMcpServer() {
+export function createQuizMcpServer() { // abstraction 
   const server = new McpServer(
     { name: "lab10-quiz-mcp", version: "1.0.0" },
     { capabilities: { tools: {}, prompts: {} } }
   );
 
   server.registerTool(
-    "list_topics",
+    "list_topics", // unique yes 
     {
-      description: "List available quiz topics with question counts.",
+      name: "list_topics", 
+      description: "List available quiz topics with question counts.", //ai
       inputSchema: z.object({}),
+      title: "List Of Topics - the best topics ever", // human
       outputSchema: listTopicsOutputSchema,
+
     },
     async () => {
       const topics = listTopics();
@@ -72,7 +79,7 @@ export function createQuizMcpServer() {
       description:
         "Fetch the next quiz question for a topic. Pass afterQuestionId to get the following question, or omit it for the first question.",
       inputSchema: z.object({
-        topicId: z.string().describe("Topic id, e.g. mcp, langchain, agents"),
+        topicId: topicIdSchema,
         afterQuestionId: z
           .string()
           .optional()
@@ -112,7 +119,7 @@ export function createQuizMcpServer() {
     {
       description: "Validate the user's answer for a quiz question.",
       inputSchema: z.object({
-        topicId: z.string().describe("Topic id"),
+        topicId: topicIdSchema,
         questionId: z.string().describe("Question id from get_question"),
         userAnswer: z.string().describe("The user's answer text"),
       }),
@@ -129,7 +136,7 @@ export function createQuizMcpServer() {
     {
       description: "Start a quiz session on a topic. Returns instructions for the quiz agent.",
       argsSchema: {
-        topicId: z.string().describe("Topic id: mcp, langchain, or agents"),
+        topicId: topicIdSchema,
       },
     },
     async ({ topicId }) => {

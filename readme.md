@@ -10,6 +10,8 @@ galamouyal88@gmail.com
 
 - https://gamma.app/docs/MCP-vs-Skills-ajmej0v6tyu3yde
 
+- https://model-context-protocol-dz2jt4d.gamma.site/
+
 # Files:
 
 https://drive.google.com/drive/folders/1XNZO0sBgUooahIMmYHMSHU2nVbmWWMGT?usp=sharing

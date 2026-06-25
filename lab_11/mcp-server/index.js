@@ -1,13 +1,8 @@
-/**
- * Lab 10 Quiz MCP server — Streamable HTTP transport.
- * Exposes quiz tools (list_topics, get_question, check_answer) and a start_quiz prompt.
- */
-import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { randomUUID } from "node:crypto";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { createQuizMcpServer } from "./create-quiz-server.js";
+import { createProductsMcpServer } from "./create-products-server.js";
 
 const app = express();
 app.use(
@@ -26,8 +21,7 @@ app.post("/mcp", async (req, res) => {
     const sessionId = req.headers["mcp-session-id"];
 
     if (sessionId && transports.has(sessionId)) {
-      const transport = transports.get(sessionId);
-      await transport.handleRequest(req, res, req.body);
+      await transports.get(sessionId).handleRequest(req, res, req.body);
       return;
     }
 
@@ -40,7 +34,7 @@ app.post("/mcp", async (req, res) => {
       return;
     }
 
-    const server = createQuizMcpServer();
+    const server = createProductsMcpServer();
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => randomUUID(),
       onsessioninitialized: (sid) => {
@@ -67,9 +61,38 @@ app.post("/mcp", async (req, res) => {
   }
 });
 
-app.get("/health", (_req, res) => res.json({ ok: true, service: "quiz-mcp" }));
+app.get("/mcp", async (req, res) => {
+  const sessionId = req.headers["mcp-session-id"];
+  if (!sessionId || !transports.has(sessionId)) {
+    res.status(400).json({
+      jsonrpc: "2.0",
+      error: { code: -32000, message: "Missing or invalid session ID" },
+      id: null,
+    });
+    return;
+  }
+  await transports.get(sessionId).handleRequest(req, res);
+});
 
-const PORT = Number(process.env.MCP_PORT) || 3200;
+app.delete("/mcp", async (req, res) => {
+  const sessionId = req.headers["mcp-session-id"];
+  if (!sessionId || !transports.has(sessionId)) {
+    res.status(400).json({
+      jsonrpc: "2.0",
+      error: { code: -32000, message: "Missing or invalid session ID" },
+      id: null,
+    });
+    return;
+  }
+  await transports.get(sessionId).handleRequest(req, res);
+});
+
+app.get("/health", (_req, res) =>
+  res.json({ ok: true, service: "products-mcp", tool: "getProducts" })
+);
+
+const PORT = Number(process.env.MCP_PORT) || 3110;
 app.listen(PORT, () => {
-  console.log(`Lab 10 Quiz MCP server on http://localhost:${PORT}/mcp`);
+  console.log(`Lab 11 Products MCP server → http://localhost:${PORT}/mcp`);
+  console.log(`  Tool: getProducts (filter by name, type, minPrice, maxPrice)`);
 });

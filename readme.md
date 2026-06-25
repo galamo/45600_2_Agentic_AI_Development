@@ -12,6 +12,8 @@ galamouyal88@gmail.com
 
 - https://model-context-protocol-dz2jt4d.gamma.site/
 
+- https://docs.langchain.com/oss/javascript/langchain/agents
+
 # Files:
 
 https://drive.google.com/drive/folders/1XNZO0sBgUooahIMmYHMSHU2nVbmWWMGT?usp=sharing
@@ -195,7 +197,6 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 - configure GITHUB MCP.
 - configure FIGMA MCP.
 
-
 ## Ex_2
 
 - Lab 10 — extend the Quiz MCP server (`lab_10_mcp/mcp-server/`).
@@ -203,4 +204,3 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 - Suggested tools: `get_question_by_id`, `get_topic_progress` (or `search_questions`, `get_random_question`).
 - Each tool: Zod input/output schema, clear description, handle unknown `topicId` / invalid input with `isError`.
 - Test from Cursor MCP or the lab client.
-

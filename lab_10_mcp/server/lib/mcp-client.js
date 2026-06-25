@@ -6,7 +6,7 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 
-const MCP_URL = process.env.MCP_QUIZ_URL || "http://localhost:3100/mcp";
+const MCP_URL = process.env.MCP_QUIZ_URL || "http://localhost:3200/mcp";
 
 function mcpInputSchemaToZod(jsonSchema) {
   if (!jsonSchema || typeof jsonSchema !== "object") return z.object({});
@@ -47,7 +47,7 @@ async function getMcpToolsAsLangChain(mcpClient) {
     const name = t.name;
     const description = t.description ?? `Call MCP tool: ${name}`;
     const schema = mcpInputSchemaToZod(t.inputSchema);
-    return new DynamicStructuredTool({
+    return new DynamicStructuredTool({ //langchain 
       name,
       description,
       schema,
@@ -94,7 +94,7 @@ export async function connectQuizMcp(topicId) {
   }
 
   const tools = await getMcpToolsAsLangChain(client);
-
+ 
   return {
     client,
     transport,

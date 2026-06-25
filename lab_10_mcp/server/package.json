@@ -4,7 +4,11 @@
   "description": "LangChain quiz agent with MCP and standalone modes",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "chat": "node cli.js --mode mcp --topic langchain --message 'give me a question?'",
+    "chat1": "node cli.js --mode mcp --topic mcp --message 'give me a question?'",
+    "chat2": "node cli.js --mode mcp --topic mcp --message 'try to insert new topic'",
+    "chat3": "node cli.js --mode mcp --topic mcp --message 'add new question to the questions list'"
   },
   "dependencies": {
     "@langchain/core": "^0.3.0",

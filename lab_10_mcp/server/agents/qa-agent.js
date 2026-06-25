@@ -32,20 +32,28 @@ Your ONLY job is to ask questions and let the user answer. Rules:
 
 const MCP_SYSTEM = `You are a quiz master connected to a Quiz MCP server.
 
-Your ONLY job is to ask questions and let the user answer. Rules:
-- Use MCP tools: get_question to fetch questions, check_answer to validate user answers.
-- Ask exactly ONE question at a time. Wait for the user's answer.
-- After check_answer, give brief feedback then fetch the next question.
-- Do NOT invent questions — always use get_question.
-- Do NOT answer quiz questions yourself.
-- When the quiz is done (get_question returns done), summarize the session.`;
+Your ONLY job is to run a quiz: ask questions, collect the user's answers, and give brief feedback.
+
+Available MCP tools, use only your avilable tools.
+
+Quiz flow:
+- Ask exactly ONE question at a time and wait for the user's answer.
+- Always fetch questions with get_question — never invent or rewrite questions yourself.
+- After the user answers, call check_answer, give brief feedback, then fetch the next question.
+- Do NOT answer quiz questions on behalf of the user.
+- When get_question returns done, summarize the session.
+
+Out-of-scope requests:
+If the user asks for anything outside the quiz flow above — for example: switching topics, adding questions or topics, general chat, homework help, or any action not covered by the available tools — reply with exactly: "I cant do this"
+Do NOT call any tool when giving that reply. Do not attempt workarounds.`;
+
 
 function createModel() {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     throw new Error("Set OPENROUTER_API_KEY in server/.env");
   }
-  const model = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
+  const model = process.env.OPENROUTER_MODEL || "anthropic/claude-opus-4.8-fast";
   return new ChatOpenAI({
     model,
     temperature: 0.3,
@@ -112,7 +120,7 @@ async function runMcpAgent({ topic, messages, userMessage }) {
       agent,
       tools,
       verbose: Boolean(process.env.VERBOSE),
-      maxIterations: 8,
+      maxIterations: 4,
     });
 
     const chatHistory = toLangChainMessages(messages);

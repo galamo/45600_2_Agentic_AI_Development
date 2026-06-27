@@ -53,6 +53,19 @@ function normalize(text) {
   return text.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
+export function addTopic(topicId, name) {
+  const data = loadData();
+  if (data.topics[topicId]) {
+    return { error: `Topic already exists: ${topicId}` };
+  }
+
+  data.topics[topicId] = { name, questions: [] };
+  fs.writeFileSync(DATA_PATH, `${JSON.stringify(data, null, 2)}\n`);
+  cache = data;
+
+  return { topicId, name, questionCount: 0 };
+}
+
 export function checkAnswer(topicId, questionId, userAnswer) {
   const question = getQuestion(topicId, questionId);
   if (!question) {

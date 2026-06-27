@@ -1,6 +1,6 @@
 /**
  * Lab 10 Quiz MCP server — Streamable HTTP transport.
- * Exposes quiz tools (list_topics, get_question, check_answer) and a start_quiz prompt.
+ * Exposes quiz tools (list_topics, get_question, check_answer, add_topic) and a start_quiz prompt.
  */
 import "dotenv/config";
 import express from "express";
@@ -21,7 +21,25 @@ app.use(express.json());
 
 const transports = new Map();
 
+function parseAuthFromRequest(req) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || typeof authHeader !== "string") return undefined;
+
+  const bearerMatch = authHeader.match(/^Bearer\s+(.+)$/i);
+  if (bearerMatch) {
+    return { token: bearerMatch[1], clientId: "lab10", scopes: [] };
+  }
+
+  const tokenMatch = authHeader.match(/^token:(.+)$/i);
+  if (tokenMatch) {
+    return { token: tokenMatch[1], clientId: "lab10", scopes: [] };
+  }
+
+  return undefined;
+}
+
 app.post("/mcp", async (req, res) => {
+  req.auth = parseAuthFromRequest(req);
   try {
     const sessionId = req.headers["mcp-session-id"];
 

@@ -23,7 +23,6 @@
           "question": "What are the three primitive capabilities MCP servers can expose?",
           "answer": "tools, resources, and prompts"
         }
-        
       ]
     },
     "langchain": {
@@ -75,6 +74,10 @@
           "answer": "Paris"
         }
       ]
+    },
+    "test-topic-1782410067356": {
+      "name": "Test Topic",
+      "questions": []
     }
   }
 }

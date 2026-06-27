@@ -204,3 +204,10 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 - Suggested tools: `get_question_by_id`, `get_topic_progress` (or `search_questions`, `get_random_question`).
 - Each tool: Zod input/output schema, clear description, handle unknown `topicId` / invalid input with `isError`.
 - Test from Cursor MCP or the lab client.
+
+
+# 25/6
+- Design a data store (sql or nosql) to store the quiz data.
+- Instead of storing the data in JSON file local on the server use a DB
+- Use docker
+- Choose your connection and Backend node.js code 

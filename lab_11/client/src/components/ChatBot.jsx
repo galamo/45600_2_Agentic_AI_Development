@@ -14,6 +14,26 @@ const SUGGESTIONS = [
   "Compare gaming consoles",
 ];
 
+function ProductCards({ products, total }) {
+  return (
+    <div className="chat-products">
+      <p className="chat-products-count">{total} product{total !== 1 ? "s" : ""} found</p>
+      <div className="chat-products-grid">
+        {products.map((p) => (
+          <div key={p.id} className="chat-product-card">
+            <img src={p.image} alt={p.name} className="chat-product-img" loading="lazy" />
+            <div className="chat-product-info">
+              <span className="chat-product-name">{p.name}</span>
+              <span className="type-badge">{p.type}</span>
+              <span className="price">${p.price.toFixed(2)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function ChatBot() {
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState("");
@@ -40,7 +60,13 @@ export default function ChatBot() {
         userMessage: trimmed,
         messages: messages.map((m) => ({ role: m.role, content: m.content })),
       });
-      setMessages([...history, { role: "assistant", content: data.reply }]);
+      const assistantMsg = {
+        role: "assistant",
+        content: data.reply,
+        products: data.products,
+        total: data.total,
+      };
+      setMessages([...history, assistantMsg]);
     } catch (err) {
       const errText = err.response?.data?.error || err.message;
       setMessages([
@@ -65,17 +91,33 @@ export default function ChatBot() {
     }
   }
 
+  function handleClear() {
+    setMessages([INITIAL_MESSAGE]);
+    setInput("");
+    setTimeout(() => inputRef.current?.focus(), 50);
+  }
+
   return (
     <div className="chatbot">
       <div className="chat-header">
-        <h3>🤖 AI Product Assistant</h3>
-        <p>Powered by LangChain + MCP <code>getProducts</code></p>
+        <div style={{ flex: 1 }}>
+          <h3>🤖 AI Product Assistant</h3>
+          <p>Powered by LangChain + MCP <code>getProducts</code></p>
+        </div>
+        {messages.length > 1 && (
+          <button className="chat-clear-btn" onClick={handleClear} disabled={thinking}>
+            Clear
+          </button>
+        )}
       </div>
 
       <div className="chat-messages">
         {messages.map((msg, i) => (
           <div key={i} className={`message ${msg.role}`}>
             <div className="message-bubble">{msg.content}</div>
+            {msg.products && msg.products.length > 0 && (
+              <ProductCards products={msg.products} total={msg.total} />
+            )}
           </div>
         ))}
 

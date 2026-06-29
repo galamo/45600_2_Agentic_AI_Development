@@ -211,3 +211,8 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 - Instead of storing the data in JSON file local on the server use a DB
 - Use docker
 - Choose your connection and Backend node.js code 
+
+
+# 29/6
+- Run lab_11
+- Run lab_13

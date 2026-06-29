@@ -75,26 +75,6 @@ function toLangChainMessages(messages) {
 /**
  * Standalone mode — no MCP, LLM generates quiz questions.
  */
-async function runStandaloneAgent({ topic, messages, userMessage }) {
-  const llm = createModel();
-  const topicLabel =
-    { mcp: "Model Context Protocol", langchain: "LangChain", agents: "AI Agents" }[
-      topic
-    ] || topic;
-
-  const history = toLangChainMessages(messages);
-  const chatMessages = [
-    new SystemMessage(`${STANDALONE_SYSTEM}\n\nQuiz topic: ${topicLabel}`),
-    ...history,
-    new HumanMessage(userMessage),
-  ];
-
-  const response = await llm.invoke(chatMessages);
-  return {
-    reply: response.content,
-    mode: "standalone",
-  };
-}
 
 /**
  * MCP mode — tool-calling agent connected to Quiz MCP server.
@@ -153,9 +133,7 @@ export async function runQaAgent({ mode, topic, messages, userMessage }) {
   if (mode === "mcp") {
     return runMcpAgent({ topic, messages, userMessage });
   }
-  if (mode === "standalone") {
-    return runStandaloneAgent({ topic, messages, userMessage });
-  }
+
   throw new Error(`Invalid mode: ${mode}. Use "mcp" or "standalone".`);
 }
 

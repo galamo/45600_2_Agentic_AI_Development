@@ -272,6 +272,9 @@ tbody td {
   padding: 16px 20px;
   border-bottom: 1px solid #e2e8f0;
   background: #f8f9ff;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .chat-header h3 {
@@ -379,4 +382,88 @@ tbody td {
   font-size: 0.72rem;
   color: #94a3b8;
   padding: 0 16px 10px;
+}
+
+/* ── Chat header clear button ── */
+.chat-clear-btn {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  padding: 5px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+.chat-clear-btn:hover:not(:disabled) { background: #f8fafc; color: #1a1a2e; }
+.chat-clear-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Chat product cards ── */
+.chat-products {
+  margin-top: 8px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.chat-products-count {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.chat-products-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chat-product-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.chat-product-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 7px;
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.chat-product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.chat-product-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-product-info .type-badge {
+  font-size: 0.68rem;
+  align-self: flex-start;
+}
+
+.chat-product-info .price {
+  font-size: 0.82rem;
 }

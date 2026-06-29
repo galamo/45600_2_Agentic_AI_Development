@@ -205,14 +205,46 @@ OPENROUTER_MODEL=openrouter:gpt-5.4
 - Each tool: Zod input/output schema, clear description, handle unknown `topicId` / invalid input with `isError`.
 - Test from Cursor MCP or the lab client.
 
-
 # 25/6
+
 - Design a data store (sql or nosql) to store the quiz data.
 - Instead of storing the data in JSON file local on the server use a DB
 - Use docker
-- Choose your connection and Backend node.js code 
-
+- Choose your connection and Backend node.js code
 
 # 29/6
+
 - Run lab_11
 - Run lab_13
+
+## Ex_1
+
+- Create New MCP server based STDIO communication
+- Target:
+  Local Notes Server
+  Tools to save_note and list_notes to a local JSON file.
+
+```javascript
+import { readFile, writeFile } from "fs/promises";
+const FILE = "./notes.json";
+
+// save_note: read array, push {text, ts}, write back
+// list_notes: read array, return joined text
+```
+
+for example:
+Agent - what is the capital of Israel? and put it in my notes
+Result - answer and notes saved
+
+```javascript
+{
+  "mcpServers": {
+    "notes": {
+      "command": "node",
+      "args": ["/absolute/path/to/notes-mcp/index.js"]
+    }
+  }
+}
+
+
+```

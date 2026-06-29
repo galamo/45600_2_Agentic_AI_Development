@@ -4,7 +4,8 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
-
+// ResolveMCP_OLD
+// ResolveMCP_NEW - what you build
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_MCP_SCRIPT = path.resolve(__dirname, "../../mcp-server/index.js");
 

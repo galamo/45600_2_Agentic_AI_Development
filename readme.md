@@ -258,4 +258,4 @@ Result - answer and notes saved
 
 # Ex_1 
 - Change the Tool - generateStoryImageTool - to be an Agent. 
-
+- Add another agent that support translation 

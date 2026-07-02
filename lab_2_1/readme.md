@@ -75,3 +75,6 @@ Reasoning-capable models (e.g. `openai/gpt-5.5`) can return chain-of-thought tok
 | **Stream with `streamEvents` v3** | Live output as tokens arrive | Replace `invoke()` with `agent.streamEvents(input, { version: "v3" })`. Use `msg.reasoning` and `msg.text` async iterables. |
 
 If the model returns no reasoning tokens, the box is skipped and only the story is printed. With `openai/gpt-5.5`, OpenRouter may return encrypted reasoning only — the agent shows a short notice in that case. Use `openai/gpt-5.4` for consistent readable summaries.
+
+
+

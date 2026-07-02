@@ -1,57 +1,13 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
+import { generateStoryImage } from "../agents/story-image.agent.js";
+import { putStoryImage } from "../utils/story-image-store.util.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const OUTPUT_DIR = path.join(__dirname, "..", "generated-images");
-const OPENROUTER_IMAGES_URL = "https://openrouter.ai/api/v1/images";
-
-function slugify(value) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 40);
-}
-
-async function ensureOutputDir() {
-  await fs.mkdir(OUTPUT_DIR, { recursive: true });
-}
-// agent image ! 
-async function requestImage({ apiKey, model, prompt }) {
-  const response = await fetch(OPENROUTER_IMAGES_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      prompt,
-      n: 1,
-      aspect_ratio: "1:1",
-      output_format: "png",
-    }),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`OpenRouter image API failed (${response.status}): ${errorText}`);
-  }
-
-  const result = await response.json();
-  const imageData = result?.data?.[0]?.b64_json;
-
-  if (!imageData) {
-    throw new Error("OpenRouter image API returned no image data.");
-  }
-
-  return imageData;
-}
-
-export function createGenerateStoryImageTool({ apiKey, imageModel }) {
+/**
+ * Tool wrapper that delegates illustration work to the story-image sub-agent.
+ * Returns an imageId for the main agent to optionally persist via save_story_image.
+ */
+export function createGenerateStoryImageTool({ apiKey, imageModel, model }) {
   return tool(
     async ({ storyText, imagePrompt }) => {
       const trimmedStory = storyText.trim();
@@ -59,34 +15,38 @@ export function createGenerateStoryImageTool({ apiKey, imageModel }) {
         return "Error: storyText is required to generate an illustration.";
       }
 
-      const visualPrompt =
-        imagePrompt?.trim() ||
-        `Children's book illustration, warm and colorful, kid-friendly style: ${trimmedStory}`;
+      try {
+        const { imageBase64, visualPrompt } = await generateStoryImage({
+          apiKey,
+          imageModel,
+          storyText: trimmedStory,
+          imagePrompt,
+          model,
+        });
 
-      const imageBase64 = await requestImage({
-        apiKey,
-        model: imageModel,
-        prompt: visualPrompt,
-      });
+        const imageId = putStoryImage({
+          imageBase64,
+          visualPrompt,
+          storyText: trimmedStory,
+        });
 
-      await ensureOutputDir();
-
-      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-      const storySlug = slugify(trimmedStory) || "story";
-      const fileName = `story-${storySlug}-${timestamp}.png`;
-      const filePath = path.join(OUTPUT_DIR, fileName);
-
-      await fs.writeFile(filePath, Buffer.from(imageBase64, "base64"));
-
-      const relativePath = path.join("generated-images", fileName);
-      return `Image generated and saved to ${relativePath}`;
+        return JSON.stringify({
+          success: true,
+          imageId,
+          visualPrompt,
+          message:
+            "Illustration generated. Use save_story_image with this imageId when the user wants the file saved.",
+        });
+      } catch (err) {
+        return `Error generating illustration: ${err.message || String(err)}`;
+      }
     },
     {
       name: "generate_story_image",
       description:
-        "Generate and save a kid-friendly illustration for a story. " +
+        "Generate a kid-friendly illustration for a story using the story-image agent. " +
         "Call this ONLY when the user explicitly asks for an image, picture, or illustration. " +
-        "Pass the full story text and an optional visual prompt.",
+        "Returns an imageId — use save_story_image to persist the file when appropriate.",
       schema: z.object({
         storyText: z
           .string()
@@ -95,7 +55,7 @@ export function createGenerateStoryImageTool({ apiKey, imageModel }) {
           .string()
           .optional()
           .describe(
-            "Optional visual description for the image. If omitted, a child-friendly illustration prompt is derived from the story.",
+            "Optional visual description for the image. If omitted, the image agent derives one from the story.",
           ),
       }),
     },

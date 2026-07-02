@@ -259,3 +259,21 @@ Result - answer and notes saved
 # Ex_1 
 - Change the Tool - generateStoryImageTool - to be an Agent. 
 - Add another agent that support translation 
+
+
+# Ex_2
+- Create the following skills:
+A Skill that reviews code according to your standards.
+
+TypeScript strictness
+error handling
+async/await issues
+naming
+security
+API validation
+logging
+architecture
+duplication
+performance
+
+- use them, check if the agent knows to recognize and use them. 

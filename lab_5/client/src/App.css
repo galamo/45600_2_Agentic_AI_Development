@@ -390,6 +390,80 @@
   border-radius: 3px;
 }
 
+/* Countries table */
+.countries-table-section {
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.countries-table-title {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 20px;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.countries-table-wrapper {
+  overflow-x: auto;
+  padding: 16px 20px 20px;
+}
+
+.countries-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.countries-table th,
+.countries-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.countries-table th {
+  background: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.countries-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.countries-table-status td {
+  text-align: center;
+  color: #6c757d;
+  padding: 24px;
+}
+
+.countries-table-error td {
+  color: #721c24;
+}
+
+.country-flag {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.country-name {
+  font-weight: 600;
+  color: #212529;
+}
+
+.country-official,
+.country-subregion {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 2px;
+}
+
 /* Route map (bottom) */
 .route-map-section {
   width: 100%;

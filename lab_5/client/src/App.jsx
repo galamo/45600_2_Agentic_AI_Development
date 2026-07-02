@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Polyline, CircleMarker, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
+import CountriesTable from './components/CountriesTable.jsx';
 import './App.css';
 
 function FitRouteBounds({ from, to }) {
@@ -242,6 +243,8 @@ function App() {
           </aside>
         )}
       </div>
+
+      <CountriesTable />
 
       {route && (
         <section className="route-map-section">

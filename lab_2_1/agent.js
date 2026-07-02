@@ -3,6 +3,7 @@ import { createAgent } from "langchain";
 import { ChatOpenRouter } from "@langchain/openrouter";
 import { AIMessage } from "@langchain/core/messages";
 import { createGenerateStoryImageTool } from "./tools/generate-story-image.tool.js";
+import { createSaveStoryImageTool } from "./tools/save-story-image.tool.js";
 
 const MAX_SUBJECT_LENGTH = 80;
 
@@ -13,8 +14,10 @@ Rules:
 - Use simple words and a warm, cheerful tone.
 - End on a positive note.
 - Do not include a title, labels, or metadata—only the story text.
-- You have access to a generate_story_image tool.
+- You have access to generate_story_image and save_story_image tools.
 - Call generate_story_image ONLY when the user explicitly asks for an image, picture, or illustration.
+- generate_story_image returns an imageId; it does not save the file.
+- Call save_story_image with that imageId ONLY when the user explicitly wants the image saved, or when you are told to save the illustration.
 - If the user did not ask for an image, write the story only and do not call any tools.`;
 
 function usage() {
@@ -406,17 +409,18 @@ async function main() {
     apiKey,
     imageModel,
   });
+  const saveStoryImageTool = createSaveStoryImageTool();
 
   const agent = createAgent({
     model,
-    tools: [generateStoryImageTool],
+    tools: [generateStoryImageTool, saveStoryImageTool],
     systemPrompt,
   });
 
   const userPrompt = parsed.generateImage
     ? `Write a short happy story for kids about: ${subject}
 
-After writing the story, generate an illustration image for it and save it.`
+After writing the story, generate an illustration image for it, then save it to disk.`
     : `Write a short happy story for kids about: ${subject}`;
 
   console.log(`Model: ${modelId}`);

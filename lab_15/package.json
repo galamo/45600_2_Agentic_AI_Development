@@ -1,7 +1,7 @@
 {
-  "name": "kids-story-agent",
+  "name": "pdf-analyzer-agent",
   "version": "1.0.0",
-  "description": "LangChain agent that writes short happy kids stories via OpenRouter",
+  "description": "LangChain agent that receives a PDF path and uses a PDF Analyzer Skill (sub-agent) to parse and analyze it",
   "type": "module",
   "scripts": {
     "agent": "node agent.js",
@@ -13,9 +13,9 @@
   "dependencies": {
     "@langchain/core": "^1.1.48",
     "@langchain/openrouter": "^0.3.0",
-    "axios": "^1.18.1",
     "dotenv": "^17.4.2",
     "langchain": "^1.4.2",
+    "pdf-parse": "^1.1.1",
     "zod": "^4.2.0"
   }
 }

@@ -279,3 +279,5 @@ architecture
 sort them by priority with relevant icons
 
 - use them, check if the agent knows to recognize and use them.
+
+hook=>skill

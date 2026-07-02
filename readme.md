@@ -249,21 +249,21 @@ Result - answer and notes saved
 
 ```
 
-
 # 2/7
-- skills 
+
+- skills
 - MCP (resources/prompts)
 - Tool as an Agent ( calling a tool for agent )
 
+# Ex_1
 
-# Ex_1 
-- Change the Tool - generateStoryImageTool - to be an Agent. 
-- Add another agent that support translation 
-
+- Change the Tool - generateStoryImageTool - to be an Agent.
+- Add another agent that support translation
 
 # Ex_2
+
 - Create the following skills:
-A Skill that reviews code according to your standards.
+  A Skill that reviews code according to your standards.
 
 TypeScript strictness
 error handling
@@ -272,8 +272,10 @@ naming
 security
 API validation
 logging
-architecture
 duplication
 performance
+architecture
 
-- use them, check if the agent knows to recognize and use them. 
+sort them by priority with relevant icons
+
+- use them, check if the agent knows to recognize and use them.

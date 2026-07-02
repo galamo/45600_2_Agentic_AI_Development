@@ -248,3 +248,14 @@ Result - answer and notes saved
 
 
 ```
+
+
+# 2/7
+- skills 
+- MCP (resources/prompts)
+- Tool as an Agent ( calling a tool for agent )
+
+
+# Ex_1 
+- Change the Tool - generateStoryImageTool - to be an Agent. 
+

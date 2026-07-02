@@ -1,3 +1,5 @@
+export type ModelEffort = "low" | "medium" | "high";
+
 export type UploadedImage = {
   id: string;
   imageUrl: string;

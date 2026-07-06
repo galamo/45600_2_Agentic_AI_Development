@@ -7,6 +7,31 @@
         "matcher": "^git push\\b",
         "timeout": 5
       }
+    ],
+    "beforeSubmitPrompt": [
+      {
+        "command": "python3 .cursor/hooks/tests-passed-push.py beforeSubmitPrompt",
+        "timeout": 5
+      }
+    ],
+    "afterAgentResponse": [
+      {
+        "command": "python3 .cursor/hooks/tests-passed-push.py afterAgentResponse",
+        "timeout": 5
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": "python3 .cursor/hooks/tests-passed-push.py afterShellExecution",
+        "timeout": 5
+      }
+    ],
+    "stop": [
+      {
+        "command": "python3 .cursor/hooks/tests-passed-push.py stop",
+        "loop_limit": 2,
+        "timeout": 10
+      }
     ]
   }
 }

@@ -284,5 +284,6 @@ hook=>skill
 
 # 6.7.2026
 
-## Ex_1 
-- Create new rule 
+## Ex_1
+
+- Create new rule 2

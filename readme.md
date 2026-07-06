@@ -283,3 +283,6 @@ sort them by priority with relevant icons
 hook=>skill
 
 # 6.7.2026
+
+## Ex_1 
+- Create new rule 

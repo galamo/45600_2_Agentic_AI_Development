@@ -1,0 +1,65 @@
+---
+description: Prefer async/await over callback-style async code
+globs: **/*.{js,ts,jsx,tsx}
+alwaysApply: false
+---
+
+# Async/await over callbacks
+
+When writing asynchronous code, **always use `async`/`await`** instead of callback-based patterns.
+
+Do **not** use:
+
+- Callback parameters (`(err, result) => {}`)
+- Nested `.then()` chains when `async`/`await` is clearer
+- `new Promise((resolve, reject) => { ... })` wrappers around APIs that already return promises
+
+## Examples
+
+```javascript
+// ❌ BAD — callback
+fs.readFile(path, "utf8", (err, data) => {
+  if (err) return handleError(err);
+  processData(data);
+});
+
+// ✅ GOOD — async/await with promisified API
+const data = await fs.promises.readFile(path, "utf8");
+processData(data);
+```
+
+```javascript
+// ❌ BAD — promise chain
+getUser(id)
+  .then((user) => getOrders(user.id))
+  .then((orders) => renderOrders(orders))
+  .catch(handleError);
+
+// ✅ GOOD — async/await
+try {
+  const user = await getUser(id);
+  const orders = await getOrders(user.id);
+  renderOrders(orders);
+} catch (err) {
+  handleError(err);
+}
+```
+
+```javascript
+// ❌ BAD — manual Promise wrapper around an async API
+function fetchData(url) {
+  return new Promise((resolve, reject) => {
+    axios.get(url).then(resolve).catch(reject);
+  });
+}
+
+// ✅ GOOD — return the promise directly or use await
+async function fetchData(url) {
+  const { data } = await axios.get(url);
+  return data;
+}
+```
+
+## Refactoring existing code
+
+If you touch a file that still uses callbacks or unnecessary `.then()` chains, refactor to `async`/`await` in the same change when the scope is small and safe.

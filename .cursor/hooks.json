@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/warn-main-push.sh",
+        "matcher": "^git push\\b",
+        "timeout": 5
+      }
+    ]
+  }
+}

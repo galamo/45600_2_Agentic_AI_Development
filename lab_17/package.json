@@ -1,0 +1,16 @@
+{
+  "name": "lab-17-langgraph",
+  "version": "1.0.0",
+  "description": "Sequential LangGraph flow that builds a user object step by step",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "keywords": ["langgraph", "agentic-ai"],
+  "dependencies": {
+    "@langchain/core": "^1.1.17",
+    "@langchain/langgraph": "^1.1.3"
+  }
+}

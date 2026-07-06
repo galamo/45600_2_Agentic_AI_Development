@@ -1,0 +1,26 @@
+%% LangGraph orchestrator flow (lab_17/graph/orchestrator.js)
+%% START → createUser → createEmail → createJob → outputUser → END
+
+flowchart LR
+  subgraph state["Shared State: user"]
+    id["id, name"]
+    email["email"]
+    job["job"]
+  end
+
+  START([START]) --> createUser
+  createUser["createUser"] --> createEmail
+  createEmail["createEmail"] --> createJob
+  createJob["createJob"] --> outputUser
+  outputUser["outputUser"] --> END([END])
+
+  createUser --> id
+  createEmail --> email
+  createJob --> job
+
+  style createUser fill:#e1f5fe
+  style createEmail fill:#e8f5e9
+  style createJob fill:#fff3e0
+  style outputUser fill:#f3e5f5
+  style START fill:#c8e6c9
+  style END fill:#ffccbc

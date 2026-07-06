@@ -1,5 +1,5 @@
 import { BrowserRouter, NavLink, Navigate, Route, Routes } from "react-router-dom";
-import CompaniesPage from "./pages/CompaniesPage";
+import CompaniesPage from "./features/companies";
 import AudioTranscriptionPage from "./features/audio-transcription";
 import AuditPage from "./features/audit";
 import { DEMO_USERS, useAuth } from "./contexts/AuthContext";

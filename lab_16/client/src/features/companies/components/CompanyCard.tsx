@@ -1,6 +1,6 @@
-import type { Company } from "../interfaces";
+import type { CompanyCardProps } from "../interfaces";
 
-export default function CompanyCard({ company }: { company: Company }) {
+export default function CompanyCard({ company }: CompanyCardProps) {
     const formattedBudget = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",

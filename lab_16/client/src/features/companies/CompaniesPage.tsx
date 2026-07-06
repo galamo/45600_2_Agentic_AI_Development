@@ -1,5 +1,5 @@
-import CompanyCard from "../components/CompanyCard";
-import type { Company } from "../interfaces";
+import CompanyCard from "./components/CompanyCard";
+import type { Company } from "../../interfaces";
 
 const companies: Company[] = [
     {

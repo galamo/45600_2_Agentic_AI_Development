@@ -290,4 +290,41 @@ hook=>skill
 
 # 13.7.2026
 
+# EX_1
+
 - Create SubAgent in Cursor for documentation, the Agent will know how to create a documentation across project - use it in multitask mode together with some prompt to create banking account application - only client
+
+# EX_2
+
+- Create a langgraph solution for lab_12
+- Graph_1
+
+```javascript
+export function createIndexingGraph() {
+  return new StateGraph(IndexingState)
+    .addNode("analyzeImage", analyzeImageNode)
+    .addNode("embedIndex", embedIndexNode)
+    .addNode("storeDocument", storeDocumentNode)
+    .addEdge(START, "analyzeImage")
+    .addEdge("analyzeImage", "embedIndex")
+    .addEdge("embedIndex", "storeDocument")
+    .addEdge("storeDocument", END)
+    .compile();
+}
+```
+
+- Graph_2
+
+```javascript
+export function createSearchGraph() {
+  return new StateGraph(SearchState)
+    .addNode("embedQuery", embedQueryNode)
+    .addNode("retrieveCandidates", retrieveCandidatesNode)
+    .addNode("rerankCandidates", rerankCandidatesNode)
+    .addEdge(START, "embedQuery")
+    .addEdge("embedQuery", "retrieveCandidates")
+    .addEdge("retrieveCandidates", "rerankCandidates")
+    .addEdge("rerankCandidates", END)
+    .compile();
+}
+```

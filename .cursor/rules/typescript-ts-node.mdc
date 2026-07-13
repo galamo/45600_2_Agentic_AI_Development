@@ -1,0 +1,54 @@
+---
+description: Write TypeScript and run Node code with ts-node in development
+alwaysApply: true
+---
+
+# TypeScript + ts-node
+
+Write **all new application code in TypeScript** (`.ts` / `.tsx`). Do not add new `.js` source files unless a tool or runtime requires it (e.g. config stubs).
+
+## Development
+
+Run Node/TypeScript entry points in development with **ts-node** (and `nodemon` or `--watch` for reload):
+
+```json
+{
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "start": "ts-node src/index.ts"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
+```
+
+- Prefer `ts-node` over `node` for `.ts` files in dev scripts.
+- Do **not** use `tsx`, `babel-node`, or plain `node` on TypeScript sources in new dev scripts.
+- Frontends (Vite, etc.) stay on their framework's dev server; this rule applies to Node backends, agents, scripts, and CLIs.
+
+## Examples
+
+```typescript
+// ❌ BAD — new logic in JavaScript
+// server/index.js
+const express = require("express");
+
+// ✅ GOOD — TypeScript source
+// server/src/index.ts
+import express from "express";
+```
+
+```json
+// ❌ BAD — running TS with node or tsx
+"dev": "node --watch index.ts"
+"dev": "tsx watch src/server.ts"
+
+// ✅ GOOD — ts-node in development
+"dev": "nodemon --exec ts-node src/server.ts"
+```
+
+## Refactoring existing code
+
+When you touch a `.js` file for a meaningful change, convert it to TypeScript in the same change when scope is small and safe. Add or update `tsconfig.json` and wire `dev` scripts to `ts-node`.

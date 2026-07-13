@@ -287,3 +287,7 @@ hook=>skill
 ## Ex_1
 
 - Create new rule 2
+
+# 13.7.2026
+
+- Create SubAgent in Cursor for documentation, the Agent will know how to create a documentation across project - use it in multitask mode together with some prompt to create banking account application - only client

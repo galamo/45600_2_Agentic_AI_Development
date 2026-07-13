@@ -1,0 +1,19 @@
+{
+  "name": "lab-20-hello-world",
+  "version": "1.0.0",
+  "description": "Node.js hello world example",
+  "type": "module",
+  "scripts": {
+    "start": "ts-node --esm src/index.ts",
+    "dev": "nodemon --exec ts-node --esm src/index.ts"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

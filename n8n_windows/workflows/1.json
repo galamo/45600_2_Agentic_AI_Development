@@ -1,0 +1,192 @@
+{
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          -576,
+          32
+        ],
+        "id": "5d520cc4-5de6-4912-9f38-ffdbb6c98213",
+        "name": "When chat message received",
+        "webhookId": "46f04d76-c4a9-4ef6-82fb-aaf7e5774a30"
+      },
+      {
+        "parameters": {
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "You are a helpful assistant answer the user question"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          -272,
+          32
+        ],
+        "id": "7b48f83b-7659-4f1f-be57-96f09e3a7b66",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": "openai/gpt-4.1",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          -368,
+          240
+        ],
+        "id": "f115fc86-35be-409f-b8b2-723c83002580",
+        "name": "OpenRouter Chat Model",
+        "credentials": {
+          "openRouterApi": {
+            "id": "Nyza1rel0IHs4x1i",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "endpointUrl": "http://host.docker.internal:3300/mcp",
+          "include": "selected",
+          "includeTools": [
+            "get_current_date"
+          ],
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+        "typeVersion": 1.2,
+        "position": [
+          -240,
+          256
+        ],
+        "id": "7951560a-bd35-4a3e-9039-d0d67f059ac0",
+        "name": "date mcp"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=do we have holiday in this date? \n{{ $json.output.date }}\n\nif the {{ $json.output.date }} is empty return an message: \"NO ANSWER FOR U\"",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          192,
+          32
+        ],
+        "id": "21c8b86e-8704-4903-a75d-1b4210397771",
+        "name": "AI Agent1"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          192,
+          240
+        ],
+        "id": "0dfc5a77-26aa-4f4d-bbf3-6b205061f4ad",
+        "name": "OpenRouter Chat Model1",
+        "credentials": {
+          "openRouterApi": {
+            "id": "Nyza1rel0IHs4x1i",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n\t\"date\": \"july 20 2026\",\n\t\"message\": \"extra text\"\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          -128,
+          256
+        ],
+        "id": "7631368d-d2b4-4332-8fa2-3a577b91d0fb",
+        "name": "Structured Output Parser"
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "date mcp": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "pinData": {},
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "3b6c308e94a00fc5cf108fd5216792dbfa30e810aea15c8d23577ccde201c2d3"
+    }
+  }

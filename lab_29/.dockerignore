@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+logs/*.log
+*.tsbuildinfo
+.DS_Store
+.git
+readme.md
+.gitignore

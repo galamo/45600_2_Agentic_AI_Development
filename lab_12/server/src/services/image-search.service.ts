@@ -3,7 +3,7 @@ import { getEmbeddingService } from "./openrouter-embedding.service.js";
 import { getPgVectorService } from "./pgvector.service.js";
 import { getRerankerAgentService } from "./reranker-agent.service.js";
 
-const VECTOR_CANDIDATE_LIMIT = 20;
+const VECTOR_CANDIDATE_LIMIT = 20; 
 
 export class ImageSearchService {
   async search(query: string): Promise<SearchImageResponse> {
@@ -13,10 +13,10 @@ export class ImageSearchService {
       embedding,
       VECTOR_CANDIDATE_LIMIT
     );
-
+   // dog => [1,2,3,4] => DB []
     if (candidates.length === 0) {
       return { query: trimmed, results: [] };
-    }
+    } // flower // trash // missle 
 
     const reranked = await getRerankerAgentService().rerank({
       query: trimmed,
@@ -32,6 +32,9 @@ export class ImageSearchService {
       })),
     });
 
+    console.log("candidates", candidates);
+    console.log("reranked", reranked);
+   
     const candidateById = new Map(candidates.map((c) => [c.id, c]));
 
     const results = reranked.results

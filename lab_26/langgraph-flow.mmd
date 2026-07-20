@@ -1,0 +1,14 @@
+flowchart LR
+  subgraph indexing["Indexing graph (upload)"]
+    I_START([START]) --> analyzeImage
+    analyzeImage --> embedIndex
+    embedIndex --> storeDocument
+    storeDocument --> I_END([END])
+  end
+
+  subgraph search["Search graph"]
+    S_START([START]) --> embedQuery
+    embedQuery --> retrieveCandidates
+    retrieveCandidates --> rerankCandidates
+    rerankCandidates --> S_END([END])
+  end

@@ -1,0 +1,75 @@
+---
+description: Use Winston for Node.js app logging with JSON file transports
+alwaysApply: true
+---
+
+# Winston logging (Node.js)
+
+In every **Node.js** project (servers, agents, CLIs, scripts), use **Winston** for application logs. Do **not** use `console.log` / `console.error` for app logging (except brief bootstrap before the logger exists).
+
+This rule does **not** apply to browser/Vite frontends.
+
+## Setup
+
+```bash
+npm install winston
+```
+
+Create a shared logger module (e.g. `src/lib/logger.ts` or `src/utils/logger.ts`) and import it wherever you log.
+
+## Configuration requirements
+
+1. Write logs to a **dedicated log directory** (e.g. `logs/`).
+2. Use **separate transports**:
+   - Combined / app log file (e.g. `logs/app.log`)
+   - **Error-only** log file (e.g. `logs/error.log`, level `error`)
+3. Log files must be **`.txt` or `.log` text files**.
+4. **Each line is one JSON object** (`winston.format.json()`).
+5. Every log entry must include a **timestamp** (`winston.format.timestamp()`).
+
+Optional: also log to the console in development with the same JSON (or a readable combine) format.
+
+## Example
+
+```typescript
+import path from "path";
+import winston from "winston";
+
+const logsDir = path.join(process.cwd(), "logs");
+
+export const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL ?? "info",
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.File({
+      filename: path.join(logsDir, "app.log"),
+    }),
+    new winston.transports.File({
+      filename: path.join(logsDir, "error.log"),
+      level: "error",
+    }),
+  ],
+});
+
+// Usage
+logger.info("Server started", { port: 3000 });
+logger.error("Upload failed", { error: err.message });
+```
+
+```typescript
+// ❌ BAD
+console.log("Server started");
+console.error(err);
+
+// ✅ GOOD
+logger.info("Server started", { port: 3000 });
+logger.error("Upload failed", { error: err.message });
+```
+
+## Refactoring
+
+When you touch Node code that uses `console.*` for app logs, replace it with the shared Winston logger in the same change. Ensure `logs/` exists (create on startup or document in README) and is gitignored except a `.gitkeep` if needed.

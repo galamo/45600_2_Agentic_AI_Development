@@ -1,12 +1,10 @@
 import type { Request, Response, NextFunction } from "express";
-import { getEmbeddingService } from "../services/openrouter-embedding.service.js";
-import { getImageIndexingAgentService } from "../services/image-indexing-agent.service.js";
-import { getImageSearchService } from "../services/image-search.service.js";
+import { runIndexingGraph, getIndexingGraphInfo } from "../graph/indexing-graph.js";
+import { runSearchGraph, getSearchGraphInfo } from "../graph/search-graph.js";
 import {
   getImageStorageService,
   type SavedImage,
 } from "../services/image-storage.service.js";
-import { getPgVectorService } from "../services/pgvector.service.js";
 import type { UploadImageResponse } from "../types/image-rag.types.js";
 
 function parseJsonArray(value: unknown): string[] {
@@ -32,31 +30,29 @@ export async function uploadImage(
     const storage = getImageStorageService();
     saved = storage.saveUploadedFile(req.file);
 
-    const index = await getImageIndexingAgentService().analyzeImage(
-      saved.absolutePath
-    );
-    console.log("index", index);
-    const embedding = await getEmbeddingService().embedText(index.indexedText);
+    const result = await runIndexingGraph(saved);
 
-    const row = await getPgVectorService().insertImageDocument({
-      id: saved.id,
-      originalFilename: saved.originalFilename,
-      storedFilename: saved.storedFilename,
-      imageUrl: saved.imageUrl,
-      mimeType: saved.mimeType,
-      sizeBytes: saved.sizeBytes,
-      index,
-      embedding,
-    });
+    if (!result.ok) {
+      storage.deleteFile(saved.storedFilename);
+      saved = null;
+      res.status(500).json({
+        error: result.clientMessage,
+        detail: result.error,
+        errorCode: "INDEX_IMAGE_ERROR"
+      });
+      return;
+    }
+
+    const { index, storedRow } = result;
 
     const response: UploadImageResponse = {
       image: {
-        id: row.id,
-        imageUrl: row.image_url,
-        title: row.title ?? index.title,
-        description: row.description ?? index.description,
-        tags: parseJsonArray(row.tags),
-        objects: parseJsonArray(row.objects),
+        id: storedRow.id,
+        imageUrl: storedRow.image_url,
+        title: storedRow.title ?? index.title,
+        description: storedRow.description ?? index.description,
+        tags: parseJsonArray(storedRow.tags),
+        objects: parseJsonArray(storedRow.objects),
       },
     };
 
@@ -81,7 +77,7 @@ export async function searchImages(
       return;
     }
 
-    const result = await getImageSearchService().search(query);
+    const result = await runSearchGraph(query);
     res.json(result);
   } catch (err) {
     next(err);
@@ -90,4 +86,11 @@ export async function searchImages(
 
 export function healthCheck(_req: Request, res: Response): void {
   res.json({ ok: true });
+}
+
+export function graphInfo(_req: Request, res: Response): void {
+  res.json({
+    indexing: getIndexingGraphInfo(),
+    search: getSearchGraphInfo(),
+  });
 }

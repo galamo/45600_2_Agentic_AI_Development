@@ -1,0 +1,195 @@
+{
+    "nodes": [
+      {
+        "parameters": {
+          "options": {
+            "responseMode": "lastNode"
+          }
+        },
+        "id": "e6e42d24-aa9c-403f-81ac-135fb913e9e2",
+        "name": "When chat message received",
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          -32,
+          112
+        ],
+        "webhookId": "e0dcf3a6-304b-4826-9d3b-49646be52791",
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.query.message }}",
+          "options": {
+            "systemMessage": "You are a helpful MySQL database assistant connected to a local MySQL instance via the tool named \"Execute MySQL Query\".\n\nYour job:\n1. Understand the user's request in plain language.\n2. If you do not know the schema, first run exploratory SQL such as SHOW TABLES; or DESCRIBE table_name; or SELECT * FROM information_schema.tables WHERE table_schema = DATABASE();\n3. Translate the request into a correct MySQL query and execute it with the Execute MySQL Query tool.\n4. Summarize the query results in clear, human-readable language. Include key numbers and a short table-like summary when useful.\n5. Prefer read-only SELECT queries. Only run INSERT/UPDATE/DELETE/DDL if the user explicitly asks to change data, and confirm the intent in your reply.\n6. Always use LIMIT (e.g. LIMIT 50) on exploratory SELECT * queries to avoid huge results.\n7. If a query fails, explain the error simply and try a corrected query.\n8. Never invent data — only report what the database returns.",
+            "maxIterations": 8,
+            "returnIntermediateSteps": false
+          }
+        },
+        "id": "7c1ad0dc-83e3-46e2-8812-bf2ded2d2f7b",
+        "name": "MySQL SQL Agent",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          288,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "model": "openai/gpt-5",
+          "options": {
+            "temperature": 0.1
+          }
+        },
+        "id": "d2f46cf7-d1cf-4a3a-beaa-d423599033fc",
+        "name": "OpenRouter Chat Model",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          224,
+          336
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "Nyza1rel0IHs4x1i",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "contextWindowLength": 10
+        },
+        "id": "c8f4b5f2-a055-4260-a4cb-a2723b74a7fc",
+        "name": "Simple Memory",
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          352,
+          336
+        ],
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "{{ /*n8n-auto-generated-fromAI-override*/ $fromAI('sql_query', 'A valid MySQL SQL statement to run against the local database. Prefer SELECT. Use SHOW TABLES or DESCRIBE to explore schema first.') }}",
+          "options": {
+            "queryBatching": "single"
+          }
+        },
+        "id": "cb569e7b-3160-43f9-b55a-a846aaa0f8e9",
+        "name": "Execute MySQL Query",
+        "type": "n8n-nodes-base.mySqlTool",
+        "typeVersion": 2.5,
+        "position": [
+          480,
+          336
+        ],
+        "credentials": {
+          "mySql": {
+            "id": "zCYJwZssVEWuivxS",
+            "name": "MySQL account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## MySQL Chat SQL Agent\n\n1. Attach **OpenRouter** credentials on the OpenRouter Chat Model node.\n2. Attach **Local MySQL** credentials (host, port, user, password, database). From Docker n8n use `host.docker.internal` to reach MySQL on the host.\n3. Open Chat and ask natural-language questions; the agent writes and runs SQL.",
+          "height": 200,
+          "width": 620,
+          "color": 5
+        },
+        "id": "a48595a9-3d02-4ffb-ad90-7f32cb7f3cce",
+        "name": "Sticky Note 5120a181",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          912,
+          256
+        ]
+      },
+      {
+        "parameters": {
+          "path": "c9bd1962-3d4f-43e4-8b34-514036c97e9b",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -32,
+          336
+        ],
+        "id": "a507cd06-05dd-4dce-b7c9-f421e2722741",
+        "name": "Webhook",
+        "webhookId": "c9bd1962-3d4f-43e4-8b34-514036c97e9b"
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "MySQL SQL Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "MySQL SQL Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "MySQL SQL Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Execute MySQL Query": {
+        "ai_tool": [
+          [
+            {
+              "node": "MySQL SQL Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "MySQL SQL Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "pinData": {},
+    "meta": {
+      "aiBuilderAssisted": true,
+      "builderVariant": "mcp",
+      "templateCredsSetupCompleted": true,
+      "instanceId": "3b6c308e94a00fc5cf108fd5216792dbfa30e810aea15c8d23577ccde201c2d3"
+    }
+  }

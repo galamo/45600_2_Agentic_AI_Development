@@ -331,6 +331,6 @@ export function createSearchGraph() {
 
 # 23/7/2026
 
-- Create A client web page based JS and HTML
+- Create A client web page based JS and HTML (Chatbot, form, or anything else)
 - The Client will interact the Agent in n8n
 - Will send him questions and get response to the client

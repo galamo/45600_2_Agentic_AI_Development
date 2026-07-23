@@ -328,3 +328,9 @@ export function createSearchGraph() {
     .compile();
 }
 ```
+
+# 23/7/2026
+
+- Create A client web page based JS and HTML
+- The Client will interact the Agent in n8n
+- Will send him questions and get response to the client

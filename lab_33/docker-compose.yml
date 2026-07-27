@@ -1,0 +1,31 @@
+services:
+  api:
+    image: doctordocker88/lab_2_1-api:latest
+    container_name: lab33-story-api
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    environment:
+      PORT: "3001"
+      LOG_LEVEL: info
+    volumes:
+      - story_images:/app/generated-images
+      - story_logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+volumes:
+  story_images:
+  story_logs:

@@ -1,8 +1,12 @@
 services:
   api:
+    image: doctordocker88/lab_2_1-api:11
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
     container_name: lab21-story-api
     ports:
       - "3001:3001"
@@ -29,9 +33,13 @@ services:
       start_period: 20s
 
   client:
+    image: doctordocker88/lab_2_1-client:11
+    platform: linux/amd64
     build:
       context: ./client
       dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
     container_name: lab21-story-client
     ports:
       - "3000:3000"

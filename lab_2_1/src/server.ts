@@ -4,7 +4,12 @@ import express from "express";
 import cors from "cors";
 import { logger } from "./lib/logger.js";
 import { runKidsStory } from "./story-agent.js";
-
+console.log("LOG AFTER CHANGE!!!")
+console.log("LOG AFTER CHANGE!!!")
+console.log("LOG AFTER CHANGE!!!")
+console.log("LOG AFTER CHANGE!!!")
+console.log("LOG AFTER CHANGE!!!")
+console.log("LOG AFTER CHANGE!!!")
 const app = express();
 const PORT = Number(process.env.PORT) || 3001;
 

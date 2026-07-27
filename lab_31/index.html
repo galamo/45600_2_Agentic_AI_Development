@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cars Rental — Fleet Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-bg" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <p class="brand">Cars Rental</p>
+      <p class="tagline">Ask about our fleet, owners, availability, and booking details — your rental desk is online.</p>
+    </header>
+
+    <main class="chat-shell" aria-label="Cars Rental chatbot">
+      <div class="chat-toolbar">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span class="toolbar-label">Rental Desk Online</span>
+        <span class="toolbar-meta">Fleet support · n8n agent</span>
+      </div>
+
+      <div id="progress-wrap" class="progress-wrap" hidden>
+        <div class="progress-label">
+          <span id="progress-text">Checking the fleet…</span>
+          <span id="progress-pct">0%</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <div id="chat-messages" class="chat-messages" role="log" aria-live="polite" aria-relevant="additions">
+        <div class="msg bot">
+          <div class="msg-meta">Cars Rental Agent</div>
+          <p>
+            Welcome to Cars Rental. I can help with cars, owners, and fleet questions.
+            Type a question below to begin.
+          </p>
+        </div>
+      </div>
+
+      <form id="chat-form" class="chat-form" autocomplete="off">
+        <label class="sr-only" for="message-input">Your question</label>
+        <textarea
+          id="message-input"
+          name="message"
+          rows="2"
+          maxlength="2000"
+          placeholder="e.g. How many cars do we have in the fleet?"
+          required
+        ></textarea>
+        <button type="submit" id="send-btn" class="send-btn">
+          <span>Send</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+    </main>
+
+    <footer class="site-footer">
+      <span>Cars Rental</span>
+      <span class="sep">·</span>
+      <span>Fleet assistant</span>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.11.0/dist/axios.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

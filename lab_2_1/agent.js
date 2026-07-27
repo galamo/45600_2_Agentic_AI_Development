@@ -1,24 +1,10 @@
 import "dotenv/config";
-import { createAgent } from "langchain";
-import { ChatOpenRouter } from "@langchain/openrouter";
 import { AIMessage } from "@langchain/core/messages";
-import { createGenerateStoryImageTool } from "./tools/generate-story-image.tool.js";
-import { createSaveStoryImageTool } from "./tools/save-story-image.tool.js";
-
-const MAX_SUBJECT_LENGTH = 80;
-
-const DEFAULT_SYSTEM_PROMPT = `You write short, happy stories for young children (ages 4–8).
-
-Rules:
-- Write at most 5 sentences total.
-- Use simple words and a warm, cheerful tone.
-- End on a positive note.
-- Do not include a title, labels, or metadata—only the story text.
-- You have access to generate_story_image and save_story_image tools.
-- Call generate_story_image ONLY when the user explicitly asks for an image, picture, or illustration.
-- generate_story_image returns an imageId; it does not save the file.
-- Call save_story_image with that imageId ONLY when the user explicitly wants the image saved, or when you are told to save the illustration.
-- If the user did not ask for an image, write the story only and do not call any tools.`;
+import {
+  DEFAULT_SYSTEM_PROMPT,
+  MAX_SUBJECT_LENGTH,
+  runKidsStory,
+} from "./src/story-agent.js";
 
 function usage() {
   console.log(`Usage: npm run agent -- "<subject>"
@@ -81,41 +67,6 @@ function parseArgs(argv) {
   }
 
   return args;
-}
-
-function validateSubject(subject) {
-  const trimmed = subject.trim();
-  if (!trimmed) {
-    throw new Error("Please provide a story subject (max 80 characters).");
-  }
-  if (trimmed.length > MAX_SUBJECT_LENGTH) {
-    throw new Error(
-      `Subject is too long (${trimmed.length} chars). Keep it to ${MAX_SUBJECT_LENGTH} characters or fewer.`,
-    );
-  }
-  return trimmed;
-}
-
-function getStoryText(result) {
-  const messages = result?.messages ?? [];
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
-    if (msg instanceof AIMessage || msg?.type === "ai" || msg?.role === "assistant") {
-      const content = typeof msg.content === "string" ? msg.content : String(msg.content ?? "");
-      if (content.trim()) return content.trim();
-    }
-  }
-  throw new Error("Agent returned no story text.");
-}
-
-function getSavedImagePath(result) {
-  const messages = result?.messages ?? [];
-  for (const msg of messages) {
-    const content = typeof msg.content === "string" ? msg.content : String(msg.content ?? "");
-    const match = content.match(/saved to (generated-images\/[^\s]+)/i);
-    if (match) return match[1];
-  }
-  return null;
 }
 
 function isAiMessage(msg) {
@@ -383,58 +334,20 @@ async function main() {
     return;
   }
 
-  const apiKey = process.env.OPENROUTER_API_KEY?.trim();
-  if (!apiKey) {
-    console.error("Missing OPENROUTER_API_KEY. Copy .env.example to .env and add your key.");
-    process.exit(1);
-  }
-
-  const subject = validateSubject(parsed.subject);
-  const systemPrompt = (parsed.systemPrompt || DEFAULT_SYSTEM_PROMPT).trim();
-  const modelId = process.env.OPENROUTER_MODEL?.trim() || "openai/gpt-5.5";
-  const imageModel = process.env.OPENROUTER_IMAGE_MODEL?.trim() || "openai/gpt-image-1-mini";
-
-  const model = new ChatOpenRouter({
-    model: modelId,
-    apiKey,
-    temperature: 0.8, 
-    maxTokens: 1200,
-    modelKwargs: {
-      // gpt-5.x often returns only encrypted reasoning unless summary is requested
-      reasoning: { effort: "medium", summary: "detailed" },
-    },
+  const { story, imagePath, modelId, imageModel, result } = await runKidsStory({
+    subject: parsed.subject,
+    generateImage: parsed.generateImage,
+    systemPrompt: parsed.systemPrompt || DEFAULT_SYSTEM_PROMPT,
   });
-
-  const generateStoryImageTool = createGenerateStoryImageTool({
-    apiKey,
-    imageModel,
-  });
-  const saveStoryImageTool = createSaveStoryImageTool();
-
-  const agent = createAgent({
-    model,
-    tools: [generateStoryImageTool, saveStoryImageTool],
-    systemPrompt,
-  });
-
-  const userPrompt = parsed.generateImage
-    ? `Write a short happy story for kids about: ${subject}
-
-After writing the story, generate an illustration image for it, then save it to disk.`
-    : `Write a short happy story for kids about: ${subject}`;
 
   console.log(`Model: ${modelId}`);
-  if (parsed.generateImage) {
+  if (parsed.generateImage && imageModel) {
     console.log(`Image model: ${imageModel}`);
   }
   if (parsed.debug) {
     console.log("Debug: on (agent trace enabled)");
   }
-  console.log(`Subject: ${subject}\n`);
-
-  const result = await agent.invoke({
-    messages: [{ role: "user", content: userPrompt }],
-  });
+  console.log(`Subject: ${parsed.subject.trim()}\n`);
 
   if (parsed.debug) {
     printAgentTrace(result);
@@ -442,13 +355,10 @@ After writing the story, generate an illustration image for it, then save it to 
     printReasoning(result);
   }
 
-  console.log(getStoryText(result));
+  console.log(story);
 
-  if (parsed.generateImage) {
-    const imagePath = getSavedImagePath(result);
-    if (imagePath) {
-      console.log(`\nImage saved: ${imagePath}`);
-    }
+  if (parsed.generateImage && imagePath) {
+    console.log(`\nImage saved: ${imagePath}`);
   }
 }
 

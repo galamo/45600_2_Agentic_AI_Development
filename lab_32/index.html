@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signet — Sign in</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Sora:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="atmosphere__wash"></div>
+      <div class="atmosphere__grid"></div>
+      <div class="atmosphere__orb atmosphere__orb--one"></div>
+      <div class="atmosphere__orb atmosphere__orb--two"></div>
+    </div>
+
+    <main class="stage">
+      <section class="login" aria-labelledby="login-brand">
+        <header class="login__header">
+          <p id="login-brand" class="brand">Signet</p>
+          <h1 class="login__title">Sign in</h1>
+          <p class="login__subtitle">Enter your credentials to continue.</p>
+        </header>
+
+        <form class="login__form" action="#" method="post" autocomplete="on">
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input
+              class="field__input"
+              type="email"
+              name="email"
+              placeholder="you@company.com"
+              required
+              autocomplete="email"
+            />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Password</span>
+            <input
+              class="field__input"
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              required
+              autocomplete="current-password"
+              minlength="8"
+            />
+          </label>
+
+          <div class="login__row">
+            <label class="remember">
+              <input type="checkbox" name="remember" />
+              <span>Remember me</span>
+            </label>
+            <a class="link" href="#">Forgot password?</a>
+          </div>
+
+          <button class="submit" type="submit">Sign in</button>
+        </form>
+
+        <p class="login__footer">
+          No account?
+          <a class="link" href="#">Create one</a>
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "lab-32-login",
+  "version": "1.0.0",
+  "description": "Express server that serves the Signet login page",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon --exec \"node --loader ts-node/esm src/server.ts\"",
+    "start": "node --loader ts-node/esm src/server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.13.3",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

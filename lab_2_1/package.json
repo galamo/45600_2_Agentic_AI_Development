@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "agent": "node agent.js",
-    "start": "node agent.js"
+    "dev": "nodemon --exec ts-node --esm src/server.ts",
+    "start": "node --loader ts-node/esm src/server.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "start:api": "npm start"
   },
   "engines": {
     "node": ">=18"
@@ -14,8 +18,19 @@
     "@langchain/core": "^1.1.48",
     "@langchain/openrouter": "^0.3.0",
     "axios": "^1.18.1",
+    "cors": "^2.8.5",
     "dotenv": "^17.4.2",
+    "express": "^5.1.0",
     "langchain": "^1.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2",
+    "winston": "^3.19.0",
     "zod": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.13.3",
+    "nodemon": "^3.1.10"
   }
 }

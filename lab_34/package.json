@@ -1,0 +1,28 @@
+{
+  "name": "lab-34-web-agent",
+  "version": "1.0.0",
+  "description": "Simple Claude Agent SDK web Q&A agent over Express",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon --exec \"node --loader ts-node/esm src/server.ts\"",
+    "start": "node --loader ts-node/esm src/server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.220",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.13.3",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

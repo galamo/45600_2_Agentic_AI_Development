@@ -1,0 +1,57 @@
+import { query } from "@anthropic-ai/claude-agent-sdk";
+import { logger } from "./lib/logger.js";
+
+/**
+ * Ask a web-connected Claude agent a question.
+ * Uses built-in WebSearch + WebFetch; no interactive permission prompts.
+ */
+export async function askWebAgent(question: string): Promise<string> {
+  logger.info("Agent query started", { question });
+
+  let answer = "";
+  const toolsUsed: string[] = [];
+
+  for await (const message of query({
+    prompt: question,
+    options: {
+      systemPrompt:
+        "You are a helpful research assistant with live web access. " +
+        "Use WebSearch and/or WebFetch to find current, accurate information. " +
+        "Answer clearly and concisely. Cite source URLs when useful.",
+      allowedTools: ["WebSearch", "WebFetch"],
+      permissionMode: "bypassPermissions",
+      allowDangerouslySkipPermissions: true,
+    },
+  })) {
+    if (message.type === "assistant" && message.message?.content) {
+      for (const block of message.message.content) {
+        if ("name" in block && typeof block.name === "string") {
+          toolsUsed.push(block.name);
+          logger.info("Agent tool call", { tool: block.name });
+        }
+      }
+    } else if (message.type === "result") {
+      if (message.subtype === "success") {
+        answer = message.result;
+        logger.info("Agent query succeeded", {
+          durationMs: message.duration_ms,
+          toolsUsed,
+        });
+      } else {
+        const subtype = message.subtype;
+        const errors =
+          "errors" in message && Array.isArray(message.errors)
+            ? message.errors
+            : [subtype];
+        logger.error("Agent query failed", { subtype, errors });
+        throw new Error(`Agent failed (${subtype}): ${errors.join("; ")}`);
+      }
+    }
+  }
+
+  if (!answer) {
+    throw new Error("Agent returned no answer");
+  }
+
+  return answer;
+}

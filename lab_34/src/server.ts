@@ -29,6 +29,8 @@ app.post("/ask", async (req, res) => {
 
   try {
     const answer = await askWebAgent(question);
+    console.log("agent answer is:")
+    console.log(answer)
     res.json({ question, answer });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

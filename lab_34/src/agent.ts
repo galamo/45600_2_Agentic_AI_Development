@@ -1,6 +1,6 @@
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import { logger } from "./lib/logger.js";
-
+console.log("AGENT VERSION: 2")
 /**
  * Ask a web-connected Claude agent a question.
  * Uses built-in WebSearch + WebFetch; no interactive permission prompts.
@@ -14,15 +14,14 @@ export async function askWebAgent(question: string): Promise<string> {
   for await (const message of query({
     prompt: question,
     options: {
-      model:"claude-3-5-sonnet",
+      model:"claude-sonnet-5",
       
       systemPrompt:
         "You are a helpful research assistant with live web access. " +
         "Use WebSearch and/or WebFetch to find current, accurate information. " +
         "Answer clearly and concisely. Cite source URLs when useful.",
       allowedTools: ["WebSearch", "WebFetch"],
-      permissionMode: "bypassPermissions",
-      allowDangerouslySkipPermissions: true,
+
     },
   })) {
     if (message.type === "assistant" && message.message?.content) {
@@ -34,6 +33,7 @@ export async function askWebAgent(question: string): Promise<string> {
       }
     } else if (message.type === "result") {
       if (message.subtype === "success") {
+        console.log(message)
         answer = message.result;
         logger.info("Agent query succeeded", {
           durationMs: message.duration_ms,

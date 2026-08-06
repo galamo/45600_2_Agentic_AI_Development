@@ -4,3 +4,4 @@ node_modules/
 */.env
 *big-files/
 .cursor/hooks/state/
+.mcp.json

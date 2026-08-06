@@ -10,10 +10,12 @@ export async function askWebAgent(question: string): Promise<string> {
 
   let answer = "";
   const toolsUsed: string[] = [];
-
+  
   for await (const message of query({
     prompt: question,
     options: {
+      model:"claude-3-5-sonnet",
+      
       systemPrompt:
         "You are a helpful research assistant with live web access. " +
         "Use WebSearch and/or WebFetch to find current, accurate information. " +
@@ -55,3 +57,24 @@ export async function askWebAgent(question: string): Promise<string> {
 
   return answer;
 }
+
+
+class MyAgentResearch {
+  async runAgent(question: string): Promise<any> {
+    // implement the for loop here!
+   return query({
+    prompt:question,
+    options:{
+      systemPrompt:"bla",
+      allowedTools:["WebSearch", "WebFetch"],
+    }
+   })
+  }
+}
+
+async function main(){
+  const newAgent = new MyAgentResearch();
+  const result = await newAgent.runAgent("What is the capital of France?");
+}
+
+main();

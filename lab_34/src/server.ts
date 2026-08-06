@@ -1,3 +1,5 @@
+// Code SDK EXAMPLE - Claude, Anthropic
+
 import "dotenv/config";
 import express from "express";
 import { askWebAgent } from "./agent.js";

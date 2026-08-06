@@ -10,6 +10,7 @@ export class WriterAgent {
     this.model = new ChatOpenAI({
       modelName: "openai/gpt-4o-mini",
       temperature: 0.5,
+      
       configuration: { baseURL: "https://openrouter.ai/api/v1", apiKey: apiKey },
     });
     this.name = "WriterAgent";

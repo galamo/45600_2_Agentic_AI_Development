@@ -1,0 +1,106 @@
+{
+  "users": [
+    {
+      "id": "U001",
+      "first_name": "Alice",
+      "last_name": "Cohen",
+      "email": "alice.cohen@example.com",
+      "phone": "+972-50-1234567",
+      "national_id": "312456789",
+      "date_of_birth": "1988-03-14",
+      "address": {
+        "street": "12 Rothschild Blvd",
+        "city": "Tel Aviv",
+        "country": "IL",
+        "postal_code": "6688101"
+      },
+      "status": "active",
+      "created_at": "2019-06-01T09:15:00Z"
+    },
+    {
+      "id": "U002",
+      "first_name": "Ben",
+      "last_name": "Mizrahi",
+      "email": "ben.mizrahi@example.com",
+      "phone": "+972-52-7654321",
+      "national_id": "204871365",
+      "date_of_birth": "1975-11-02",
+      "address": {
+        "street": "8 Herzl St",
+        "city": "Haifa",
+        "country": "IL",
+        "postal_code": "3303128"
+      },
+      "status": "active",
+      "created_at": "2015-02-19T14:40:00Z"
+    },
+    {
+      "id": "U003",
+      "first_name": "Clara",
+      "last_name": "Nunez",
+      "email": "clara.nunez@example.com",
+      "phone": "+1-415-555-0142",
+      "national_id": "556231908",
+      "date_of_birth": "1993-07-25",
+      "address": {
+        "street": "220 Market St",
+        "city": "San Francisco",
+        "country": "US",
+        "postal_code": "94105"
+      },
+      "status": "active",
+      "created_at": "2021-09-30T18:05:00Z"
+    },
+    {
+      "id": "U004",
+      "first_name": "David",
+      "last_name": "Okafor",
+      "email": "david.okafor@example.com",
+      "phone": "+44-7700-900123",
+      "national_id": "778345612",
+      "date_of_birth": "1982-01-09",
+      "address": {
+        "street": "45 Baker St",
+        "city": "London",
+        "country": "GB",
+        "postal_code": "W1U 7EW"
+      },
+      "status": "suspended",
+      "created_at": "2018-04-11T11:22:00Z"
+    },
+    {
+      "id": "U005",
+      "first_name": "Elena",
+      "last_name": "Petrova",
+      "email": "elena.petrova@example.com",
+      "phone": "+49-151-23456789",
+      "national_id": "119082347",
+      "date_of_birth": "1996-12-30",
+      "address": {
+        "street": "17 Kastanienallee",
+        "city": "Berlin",
+        "country": "DE",
+        "postal_code": "10435"
+      },
+      "status": "active",
+      "created_at": "2022-11-08T08:00:00Z"
+    },
+    {
+      "id": "U006",
+      "first_name": "Farid",
+      "last_name": "Haddad",
+      "email": "farid.haddad@example.com",
+      "phone": "+972-54-9988776",
+      "national_id": "640129875",
+      "date_of_birth": "1969-05-18",
+      "address": {
+        "street": "3 Ben Gurion St",
+        "city": "Nazareth",
+        "country": "IL",
+        "postal_code": "1610001"
+      },
+      "status": "inactive",
+      "created_at": "2012-07-23T16:47:00Z"
+    }
+  ]
+}

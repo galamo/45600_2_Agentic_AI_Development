@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bank Data Reports</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         margin: 0; padding: 32px; background: #f5f6f8; color: #1c1e21; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .sub { color: #6b7280; font-size: 14px; margin-bottom: 28px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 24px; }
+  .card { background: #fff; border-radius: 12px; padding: 20px 24px 28px;
+          box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .card h2 { font-size: 16px; margin: 0 0 2px; }
+  .card p { font-size: 13px; color: #6b7280; margin: 0 0 16px; }
+  .wrap { position: relative; height: 320px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #eceef1; }
+  th { color: #6b7280; font-weight: 600; }
+  td:last-child, th:last-child { text-align: right; }
+</style>
+</head>
+<body>
+<h1>Bank Data Reports</h1>
+<div class="sub">Aggregated from <code>data/users.json</code> and <code>data/bank_accounts.json</code></div>
+
+<div class="grid">
+  <div class="card">
+    <h2>Accounts by Type</h2>
+    <p>Number of bank accounts per account type</p>
+    <div class="wrap"><canvas id="typeChart"></canvas></div>
+    <table id="typeTable"></table>
+  </div>
+  <div class="card">
+    <h2>Users by City</h2>
+    <p>Number of users registered in each city</p>
+    <div class="wrap"><canvas id="cityChart"></canvas></div>
+    <table id="cityTable"></table>
+  </div>
+</div>
+
+<script>
+const USERS = [
+  {id:"U001",first_name:"Alice",last_name:"Cohen",city:"Tel Aviv",country:"IL"},
+  {id:"U002",first_name:"Ben",last_name:"Mizrahi",city:"Haifa",country:"IL"},
+  {id:"U003",first_name:"Clara",last_name:"Nunez",city:"San Francisco",country:"US"},
+  {id:"U004",first_name:"David",last_name:"Okafor",city:"London",country:"GB"},
+  {id:"U005",first_name:"Elena",last_name:"Petrova",city:"Berlin",country:"DE"},
+  {id:"U006",first_name:"Farid",last_name:"Haddad",city:"Nazareth",country:"IL"}
+];
+
+const ACCOUNTS = [
+  {account_id:"ACC-1001",owner_id:"U001",account_type:"checking"},
+  {account_id:"ACC-1002",owner_id:"U001",account_type:"savings"},
+  {account_id:"ACC-1003",owner_id:"U002",account_type:"checking"},
+  {account_id:"ACC-1004",owner_id:"U003",account_type:"checking"},
+  {account_id:"ACC-1005",owner_id:"U003",account_type:"credit"},
+  {account_id:"ACC-1006",owner_id:"U004",account_type:"checking"},
+  {account_id:"ACC-1007",owner_id:"U005",account_type:"savings"},
+  {account_id:"ACC-1008",owner_id:"U006",account_type:"checking"},
+  {account_id:"ACC-1009",owner_id:"U002",account_type:"savings"}
+];
+
+const countBy = (arr, key) => arr.reduce((m, o) => (m[o[key]] = (m[o[key]] || 0) + 1, m), {});
+const sortDesc = obj => Object.entries(obj).sort((a, b) => b[1] - a[1]);
+
+const PALETTE = ["#4e79a7","#f28e2b","#59a14f","#e15759","#76b7b2","#edc948","#b07aa1","#ff9da7"];
+
+const typeData = sortDesc(countBy(ACCOUNTS, "account_type"));
+const cityData = sortDesc(countBy(USERS, "city"));
+
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+function renderTable(el, head, rows, total) {
+  document.getElementById(el).innerHTML =
+    `<tr><th>${head[0]}</th><th>${head[1]}</th></tr>` +
+    rows.map(([k, v]) => `<tr><td>${cap(k)}</td><td>${v}</td></tr>`).join("") +
+    `<tr><th>Total</th><th>${total}</th></tr>`;
+}
+
+new Chart(document.getElementById("typeChart"), {
+  type: "pie",
+  data: {
+    labels: typeData.map(d => cap(d[0])),
+    datasets: [{ data: typeData.map(d => d[1]), backgroundColor: PALETTE, borderColor: "#fff", borderWidth: 2 }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "bottom" },
+      tooltip: { callbacks: { label: c => {
+        const total = c.dataset.data.reduce((a, b) => a + b, 0);
+        return `${c.label}: ${c.parsed} (${(c.parsed / total * 100).toFixed(1)}%)`;
+      }}}
+    }
+  }
+});
+
+new Chart(document.getElementById("cityChart"), {
+  type: "bar",
+  data: {
+    labels: cityData.map(d => d[0]),
+    datasets: [{ label: "Users", data: cityData.map(d => d[1]), backgroundColor: "#4e79a7", borderRadius: 4 }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { precision: 0 }, title: { display: true, text: "Users" } } }
+  }
+});
+
+renderTable("typeTable", ["Account type", "Accounts"], typeData, ACCOUNTS.length);
+renderTable("cityTable", ["City", "Users"], cityData, USERS.length);
+</script>
+</body>
+</html>

@@ -39,7 +39,7 @@ Replace `doctordocker88` with your Docker Hub username if different.
 
 ```bash
 cd lab_34
-docker build -t doctordocker88/lab-34-web-agent:latest .
+docker build --platform linux/amd64 -t doctordocker88/lab-34-web-agent:latest .
 ```
 
 ### Run (standalone)

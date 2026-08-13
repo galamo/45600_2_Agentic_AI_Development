@@ -1,0 +1,15 @@
+services:
+  mcp-server:
+    image: doctordocker88/lab-35-mcp:${MCP_VERSION:-1.0.5}
+    container_name: mcp-server
+    restart: unless-stopped
+    environment:
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1,::1}
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3

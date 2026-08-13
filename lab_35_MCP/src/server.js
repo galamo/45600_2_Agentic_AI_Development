@@ -4,9 +4,14 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { registerTools } from "./tools.js";
-console.log("MCP SERVER CODE IS RUNNING NOW!!!!")
+console.log("THIS VERSION WAS DEPLOYED BY FULL CI CD PIPELINE LOCALLY TO REMOTE INSTANCE USING CLAUDE")
+
+
 const PORT = process.env.PORT ?? 3000;
 const HOST = process.env.HOST ?? "127.0.0.1";
+const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS
+  ? process.env.ALLOWED_HOSTS.split(",").map((h) => h.trim())
+  : ["localhost", "127.0.0.1", "::1"];
 
 function createServer() {
   const server = new McpServer({
@@ -17,11 +22,15 @@ function createServer() {
   return server;
 }
 
-const app = createMcpExpressApp({ host: HOST });
+const app = createMcpExpressApp({ allowedHosts: ALLOWED_HOSTS });
 
 // Session id -> transport, so repeat requests from the same MCP client reuse
 // the same StreamableHTTPServerTransport (and its underlying McpServer).
 const transports = {};
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 app.post("/mcp", async (req, res) => {
   const sessionId = req.headers["mcp-session-id"];

@@ -179,3 +179,93 @@ Documents:
 - How to run tests (`npm run test`).
 - Explanation of the JWT flow with a short walkthrough of what to observe in the UI (JWT Inspector, Auth Event Timeline) when logging in, waiting for expiry, and refreshing.
 - Environment variables reference (`.env.example` contents explained).
+
+## 11. Password Reset Flow
+
+### 11.1 Goal
+
+Let a user who forgot their password regain access without an admin, using a short-lived, single-use reset token — following the same "hash-and-store, opaque-token-to-client" pattern already used for refresh tokens.
+
+### 11.2 Mechanism
+
+- **Reset token**: random opaque token (`crypto.randomBytes(32).toString("hex")`), never a JWT — it must be invalidated after one use, which opaque server-side lookups handle more simply than stateless JWTs.
+- Only the SHA-256 hash of the token is stored (`hashToken`, already defined in `auth.service.ts` — reuse it).
+- TTL: short, e.g. 30 minutes.
+- Single-use: marked `used_at` on consumption; a second attempt with the same token is rejected.
+- No real mailer exists in this project. Following the existing dev-only pattern (`GET /auth/debug/logs`), the reset link/token is written via `logAuthEvent` (so it shows up in `AuthEventLog`/`ServerLogViewer` in the client) instead of actually emailing anything. This is a deliberate lab trade-off, not a production pattern — call it out in the README.
+
+### 11.3 DB Schema — `db/init/003_password_reset.sql`
+
+```sql
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token_hash TEXT NOT NULL UNIQUE,
+    expires_at TIMESTAMPTZ NOT NULL,
+    used_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
+```
+
+New migration file (not edits to `001_schema.sql`) since Postgres only re-runs `/docker-entrypoint-initdb.d` on a fresh volume — mirrors how `002_seed.sql` was added as its own file.
+
+### 11.4 Request Flow
+
+**Forgot password**
+1. Client `POST /auth/forgot-password` with `{ email }`.
+2. Zod validates shape (`forgotPasswordSchema`).
+3. Service looks up the user. Whether or not the user exists, respond `202` with the same generic message ("If that email exists, a reset link was sent") — prevents user enumeration via response differences.
+4. If the user exists: generate token, persist hash + `expires_at`, log the raw token/link via `logAuthEvent("password_reset_requested", ...)`.
+
+**Reset password**
+1. Client `POST /auth/reset-password` with `{ token, newPassword }`.
+2. Zod validates shape (`resetPasswordSchema`, same password rules as signup — min 8 chars).
+3. Service hashes the token, looks up the row; rejects (400) if missing, expired, or already `used_at`.
+4. On success: `bcrypt.hash` the new password, update `users.password_hash`, mark the token row `used_at = now()`.
+5. Revoke all existing refresh tokens for that user (`UPDATE refresh_tokens SET revoked_at = now() WHERE user_id = $1 AND revoked_at IS NULL`) so a stolen session can't survive a password reset.
+6. Log `password_reset_success`.
+
+### 11.5 Component Changes
+
+```
+src/
+├── db/init/003_password_reset.sql        # new
+├── modules/auth/
+│   ├── auth.schemas.ts     # + forgotPasswordSchema, resetPasswordSchema
+│   ├── auth.service.ts     # + requestPasswordReset(email), resetPassword(token, newPassword)
+│   ├── auth.controller.ts  # + forgotPasswordHandler, resetPasswordHandler
+│   └── auth.routes.ts      # + POST /forgot-password, POST /reset-password
+└── users/
+    └── user.repository.ts  # + updateUserPassword(userId, passwordHash)
+```
+
+Client:
+
+```
+client/src/
+├── api/authClient.ts       # + apiForgotPassword(email), apiResetPassword(token, newPassword)
+└── pages/
+    ├── ForgotPasswordPage.tsx  # email form, posts /auth/forgot-password, generic success message
+    └── ResetPasswordPage.tsx   # reads ?token= from URL, new-password form, posts /auth/reset-password, redirects to /login
+```
+
+Add `/forgot-password` and `/reset-password` routes in `App.tsx`, and a "Forgot password?" link on `LoginPage.tsx`. Both pages follow the existing loading/success/error UX pattern (`useAsync`, toasts/inline errors) already used by `LoginPage`/`SignupPage`.
+
+### 11.6 Security Considerations
+
+- Generic response on `forgot-password` regardless of account existence (enumeration protection) — the dev-only event log is the one intentional leak, scoped to local dev.
+- Token hashed at rest, single-use, short TTL, scoped to one user.
+- New password re-hashed with bcrypt (cost 10, matching `signup`).
+- All refresh tokens revoked on successful reset to kill existing sessions.
+- Consider rate-limiting `/auth/forgot-password` alongside the existing login/refresh rate-limiting item in §5.
+
+### 11.7 Testing Strategy
+
+Mocha + Supertest additions to `test/auth.integration.test.ts` (or a new `test/password-reset.integration.test.ts`):
+- `forgot-password` returns 202 for both existing and non-existing email (no enumeration).
+- `reset-password` rejects invalid/expired/already-used token (400).
+- `reset-password` with a valid token updates the password, and the old password no longer works on `/auth/login`.
+- Login with the new password succeeds after reset.
+- Existing refresh token is rejected after a password reset.

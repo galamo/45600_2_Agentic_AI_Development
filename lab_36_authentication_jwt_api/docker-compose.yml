@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: jwt_lab_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jwt_lab
+      POSTGRES_PASSWORD: jwt_lab_password
+      POSTGRES_DB: jwt_lab_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - jwt_lab_pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+
+volumes:
+  jwt_lab_pgdata:

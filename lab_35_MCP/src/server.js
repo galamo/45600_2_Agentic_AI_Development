@@ -4,7 +4,7 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { registerTools } from "./tools.js";
-
+console.log("MCP SERVER CODE IS RUNNING NOW!!!!")
 const PORT = process.env.PORT ?? 3000;
 const HOST = process.env.HOST ?? "127.0.0.1";
 

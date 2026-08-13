@@ -1,6 +1,6 @@
 {
   "name": "lab-35-mcp-server",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "MCP server exposing users and bank accounts dummy data over Streamable HTTP",
   "type": "module",
   "main": "src/server.js",

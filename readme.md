@@ -334,3 +334,9 @@ export function createSearchGraph() {
 - Create A client web page based JS and HTML (Chatbot, form, or anything else)
 - The Client will interact the Agent in n8n
 - Will send him questions and get response to the client
+
+
+
+# 13/8 
+- Add To the Deploy Skill
+- Running+Testing+Push to docker hub

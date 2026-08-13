@@ -69,7 +69,7 @@ was given in `args`, Abort the operation and write `MISSING_FOLDER_PATH`.
    - Version part: prefer the short git SHA of the current commit if the path is inside a git
      repo (`git -C <path> rev-parse --short HEAD`); fall back to `latest` if there's no commit
      yet (e.g. untracked new project).
-   - Tag will be taken from Package.json version.
+   - Tag will be taken from Package.json version, always increase the tag version of the package.json and then use the new tag for the docker (always increment patch version).
 
 5. **Build the image.**
    - Run `docker build -t <tag> <path>` from the resolved project path.

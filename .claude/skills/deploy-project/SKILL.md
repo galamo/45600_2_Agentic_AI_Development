@@ -156,7 +156,7 @@ was given in `args`, Abort the operation and write `MISSING_FOLDER_PATH`.
      project path, skip this step entirely.
    - Load the `claude-in-chrome` tools if not already loaded (`tabs_context_mcp`, `navigate`,
      `computer`, `read_page`, `tabs_create_mcp`).
-   - Navigate to `http://54.229.23.161:5000/` — a browser-based console/terminal into the
+   - Navigate to `http://108.131.138.177:5000/` — a browser-based console/terminal into the
      deployment host.
    - From the `/mcp-server` folder on that host, run the pulled image at the exact `<TAG>`
      derived in step 4 (the just-incremented `package.json` version):

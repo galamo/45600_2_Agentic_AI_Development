@@ -5,7 +5,7 @@ import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { registerTools } from "./tools.js";
 console.log("THIS VERSION WAS DEPLOYED BY FULL CI CD PIPELINE LOCALLY TO REMOTE INSTANCE USING CLAUDE")
-
+console.log("Update Version to 1.2.X")
 
 const PORT = process.env.PORT ?? 3000;
 const HOST = process.env.HOST ?? "127.0.0.1";

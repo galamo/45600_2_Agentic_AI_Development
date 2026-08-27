@@ -158,6 +158,7 @@ was given in `args`, Abort the operation and write `MISSING_FOLDER_PATH`.
      `computer`, `read_page`, `tabs_create_mcp`).
    - Navigate to `http://108.131.138.177:5000/` — a browser-based console/terminal into the
      deployment host.
+   - navigate to folder `/mcp-server` , in case the folder does not exist, create the folder using command: `sudo mkdir mcp-server`
    - From the `/mcp-server` folder on that host, run the pulled image at the exact `<TAG>`
      derived in step 4 (the just-incremented `package.json` version):
      ```
@@ -183,5 +184,5 @@ was given in `args`, Abort the operation and write `MISSING_FOLDER_PATH`.
   building or pushing an image whose tests failed. It must also block step 8: never bring up
   the remote host on an image whose tests failed.
 - Step 8 (remote deploy via browser console) runs `sudo docker compose up -d` on a live,
-  shared host (`54.229.23.161`) — it is scoped to the `lab_35_MCP` project only. Do not
+  shared host (`108.131.138.177`) — it is scoped to the `lab_35_MCP` project only. Do not
   generalize it to other projects or other hosts without the user explicitly asking.

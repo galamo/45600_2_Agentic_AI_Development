@@ -4,8 +4,9 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { registerTools } from "./tools.js";
-console.log("THIS VERSION WAS DEPLOYED BY FULL CI CD PIPELINE LOCALLY TO REMOTE INSTANCE USING CLAUDE")
-console.log("Update Version to 1.2.X")
+console.log("THIS VERSION WAS DEPLOYED BY FULL CI CD PIPELINE LOCALLY TO REMOTE INSTANCE USING CLAUDE 27-Aug")
+console.log("THIS VERSION WAS DEPLOYED BY FULL CI CD PIPELINE LOCALLY TO REMOTE INSTANCE USING CLAUDE 27-Aug")
+console.log("THIS VERSION WAS DEPLOYED BY FULL CI CD PIPELINE LOCALLY TO REMOTE INSTANCE USING CLAUDE 27-Aug")
 
 const PORT = process.env.PORT ?? 3000;
 const HOST = process.env.HOST ?? "127.0.0.1";
@@ -22,7 +23,7 @@ function createServer() {
   return server;
 }
 
-const app = createMcpExpressApp({ allowedHosts: ALLOWED_HOSTS });
+const app = createMcpExpressApp();
 
 // Session id -> transport, so repeat requests from the same MCP client reuse
 // the same StreamableHTTPServerTransport (and its underlying McpServer).

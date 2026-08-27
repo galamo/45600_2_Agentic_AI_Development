@@ -340,3 +340,44 @@ export function createSearchGraph() {
 # 13/8 
 - Add To the Deploy Skill
 - Running+Testing+Push to docker hub
+
+
+
+# 27/8
+##  Lab: Create and Test a Claude Managed Agent
+
+## Goal
+Create a small agent in **Claude Managed Agents**, start a session with it, and test it in the Claude Console.
+
+## Task
+
+### 1. Create the Agent
+Create a new Managed Agent named:
+
+`Release Notes Assistant`
+
+Use instructions similar to:
+
+> You are a release notes assistant.  
+> When given a list of software changes, return:
+> - A short summary
+> - Main risks
+> - Recommended tests  
+> Keep the answer concise.
+
+Save the agent.
+
+### 2. Start a Session
+Create a new session and select/use your **Release Notes Assistant** agent.
+
+### 3. Test in the Console
+Send this test message:
+
+> We added Google login, changed the database connection pool, and fixed a bug in the password reset flow.
+
+### 4. Verify
+Confirm that the agent returns:
+- A summary
+- Risks
+- Recommended tests
+

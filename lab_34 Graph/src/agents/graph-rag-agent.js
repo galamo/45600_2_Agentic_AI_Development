@@ -76,7 +76,7 @@ export class GraphRagAgent {
     const system = new SystemMessage(
       "You translate natural-language questions into a single read-only Cypher query " +
       "against the schema below. Output ONLY the Cypher — no commentary, no code fences. " +
-      "Prefer variable-length paths (e.g. -[*1..4]-) for multi-hop questions. " +
+      "Prefer variable-length paths (e.g. -[*1..10]-) for multi-hop questions. " +
       "Always RETURN something useful (names, relationship types, paths).\n\n" +
       `SCHEMA:\n${SCHEMA}`
     );

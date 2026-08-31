@@ -27,7 +27,7 @@ const password = process.env.NEO4J_PASSWORD || "neo4jpassword";
 
 const userQuery =
   process.argv.slice(2).join(" ").trim() ||
-  "Who does Alice report to and where was her boss previously employed?";
+  "What is the capital of the country where Dana's employer is based?";
 
 const graphStore = createGraphStore({ uri, user, password });
 const { graph } = createRagGraph({ apiKey, model, graphStore });
